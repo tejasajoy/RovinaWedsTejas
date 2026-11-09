@@ -88,7 +88,16 @@ window.WEDDING = {
       icon: "ring",
       note: "Thank you to everyone who celebrated with us!",
       done: true,                          // already happened: shows a "Celebrated" badge and leaves it out of the RSVP
-      photos: [],                          // e.g. ["photos/engagement/1.jpg", "photos/engagement/2.jpg"] – tap a photo to open the slideshow
+      photos: [                            // shown in this order; tap a photo to open the slideshow
+        "photos/engagement/hands.jpg",
+        "photos/engagement/1H5A6995.jpg",
+        "photos/engagement/1H5A7258.jpg",
+        "photos/engagement/1H5A7378.jpg",
+        "photos/engagement/1H5A7755.jpg",
+        "photos/engagement/1H5A7780.jpg",
+        "photos/engagement/1H5A6456.jpg",
+        "photos/engagement/1H5A6590.jpg",
+      ],
     },
     {
       name: "Sangeeth",
