@@ -264,7 +264,7 @@ window.WEDDING = {
     ambient: "glow",
     amount: 40,
     speed: 1,
-    nameColor: "",            // colour of "Rovina" and "Tejas", e.g. "#ffffff" (white), "#d4af37" (gold), "#c8603f"; "" = theme colour
+    nameColor: "#1f2b3d" ,            // colour of "Rovina" and "Tejas", e.g. "#ffffff" (white), "#d4af37" (gold), "#c8603f"; "" = theme colour
     ampColor:  "",            // colour of the "&" between the names; "" = theme colour
     music: null,              // e.g. "music/song.mp3" (upload the file first) or null
     designPanel: true,        // true while testing, false before you share the site
