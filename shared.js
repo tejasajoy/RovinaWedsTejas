@@ -50,6 +50,7 @@ const DEFAULT_TITLES = {
   venues:  { eyebrow:"Where",         title:"Venues",              nav:"Venues" },
   rsvp:    { eyebrow:"Kindly reply",  title:"Will you join us?",   nav:"RSVP" },
   faq:     { eyebrow:"Good to know",  title:"Questions",           nav:"FAQ" },
+  interlude:{ eyebrow:"", title:"", nav:"" },
 };
 const REVEALS = [["mixed","Mixed (a bit of everything)"],["up","Float up"],["blur","Soft focus"],["zoom","Zoom in"],["slide","Slide from the sides"],["flip","Fold open"],["none","No scroll animation"]];
 
@@ -255,6 +256,33 @@ a.chip:hover{background:var(--accent);color:var(--accent-ink,#fff)}
 #panel pre{background:var(--bg);border-radius:10px;padding:10px;font-size:11.5px;white-space:pre-wrap;word-break:break-word;margin:8px 0}
 #panel .copied{font-size:13px;color:var(--accent);margin-left:8px}
 
+/* iris opening (shared) */
+@property --ir{syntax:'<percentage>';inherits:false;initial-value:0%}
+.intro-iris{position:fixed;inset:0;z-index:100;display:grid;place-items:center;text-align:center;background:var(--bg);color:var(--accent);--ir:0%;-webkit-mask:radial-gradient(circle at 50% 50%,transparent var(--ir),#000 calc(var(--ir) + .6%));mask:radial-gradient(circle at 50% 50%,transparent var(--ir),#000 calc(var(--ir) + .6%));transition:--ir calc(1.5s*var(--speed)) cubic-bezier(.7,0,.3,1),opacity calc(1.5s*var(--speed)) ease}
+.intro-iris.open{--ir:150%;pointer-events:none}
+@supports not (mask:radial-gradient(#000,#000)){.intro-iris.open{opacity:0}}
+.intro-iris .ii{transition:opacity .5s,transform .7s}
+.intro-iris.open .ii{opacity:0;transform:scale(.92)}
+.intro-iris b{font-family:var(--f-script);font-weight:400;font-size:clamp(64px,12vw,120px);display:block;line-height:1.1}
+.intro-iris small{display:block;letter-spacing:.24em;text-transform:uppercase;font-size:12px;color:var(--muted);margin:8px 0 26px;font-family:var(--f-body)}
+.intro-iris .ring{width:120px;height:120px;margin:0 auto 10px;border-radius:50%;border:1.5px solid var(--gold);animation:ws-breathe 2.4s ease-in-out infinite}
+@keyframes ws-breathe{50%{transform:scale(1.08);opacity:.5}}
+
+/* video backgrounds */
+.vbg{position:absolute;inset:0;overflow:hidden;z-index:-1;background:#111 center/cover no-repeat}
+.vbg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity 1.2s ease}
+.vbg video.ready{opacity:1}
+.vbg::after{content:"";position:absolute;inset:0;background:var(--veil,rgba(10,12,24,.4))}
+.vband{position:relative;isolation:isolate;overflow:hidden;min-height:78vh;display:grid;place-items:center;text-align:center;color:#fff;padding:140px 20px!important}
+.vband .vbg video{inset:-12% 0;height:124%;transform:translateY(var(--par,0px))}
+.vband .vbg::after{background:linear-gradient(180deg,rgba(8,14,26,.25),rgba(8,14,26,.45) 50%,rgba(8,14,26,.3))}
+.vb-quote{font-family:var(--f-script);font-size:clamp(42px,6.5vw,80px);line-height:1.2;max-width:20ch;margin:0 auto;text-shadow:0 4px 30px rgba(0,0,0,.35);text-wrap:balance}
+.vb-cite{display:block;margin-top:18px;font:700 12.5px var(--f-body);letter-spacing:.28em;text-transform:uppercase;opacity:.9}
+.closing.has-video{position:relative;isolation:isolate;overflow:hidden;min-height:80vh;display:grid;place-content:center;color:#fff!important;background:none!important}
+.closing.has-video .vbg::after{background:linear-gradient(180deg,rgba(8,12,24,.15),rgba(8,12,24,.5))}
+.closing.has-video .tag,.closing.has-video p{color:#fff!important;text-shadow:0 3px 24px rgba(0,0,0,.35)}
+.closing-line{font-family:var(--f-head);font-style:italic;font-size:clamp(22px,3vw,30px);margin:8px 0 4px}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   .js [data-anim]{opacity:1;transform:none;filter:none}
@@ -311,13 +339,44 @@ W.init = function(site){
   set("parents", [C.parents?.first, C.parents?.second].filter(Boolean).map(p => `<span>${esc(p)}</span>`).join(""), true);
   set("verse", C.verse?.text ? C.verse.text.split(" ").map((w, i) => `<span class="w" style="--i:${i}">${esc(w)}</span>`).join(" ") + `<cite>${esc(C.verse.ref)}</cite>` : "", true);
 
+  /* ---- videos ---- */
+  const media = (C.media || {})[site.key] || {};
+  const vids = [];
+  const portrait = matchMedia("(orientation: portrait)");
+  W.mountVideo = (holder, slot) => {
+    if (!holder || !slot || (typeof slot === "object" && !slot.wide && !slot.tall)) return false;
+    const pick = () => typeof slot === "string" ? slot : (portrait.matches && slot.tall ? slot.tall : (slot.wide || slot.tall));
+    const v = document.createElement("video");
+    v.muted = true; v.defaultMuted = true; v.loop = true; v.playsInline = true; v.preload = "auto";
+    ["muted","playsinline","loop","disablepictureinpicture"].forEach(a => v.setAttribute(a, ""));
+    v.setAttribute("aria-hidden", "true"); v.tabIndex = -1;
+    v.addEventListener("loadeddata", () => v.classList.add("ready"));
+    const set = () => { const src = pick(); if (v.dataset.src === src) return; v.dataset.src = src; const poster = src.replace(/\.(mp4|webm|mov)$/i, ".jpg"); holder.style.backgroundImage = `url("${poster}")`; v.poster = poster; v.src = src; if (!reduce && v.dataset.vis === "1") v.play().catch(() => {}); };
+    set(); if (typeof slot === "object") portrait.addEventListener("change", set);
+    holder.appendChild(v); vids.push(v); return true;
+  };
+  if (W.mountVideo($("#heroVideo"), media.hero)) $("#home")?.classList.add("has-video");
+  if (media.interlude && !$('[data-sec="interlude"]') && $("#sections")) {
+    $("#sections").insertAdjacentHTML("beforeend", `<section id="interlude" data-sec="interlude" class="vband"><div class="vbg" id="interVideo"></div><div class="vb-text" data-anim="blur"><p class="vb-quote">${esc(C.interlude?.text || "")}</p>${C.interlude?.ref ? `<cite class="vb-cite">${esc(C.interlude.ref)}</cite>` : ""}</div></section>`);
+    W.mountVideo($("#interVideo"), media.interlude);
+  }
+  const closing = $("#closing");
+  if (closing) {
+    if (C.closing?.line) closing.querySelector(".tag")?.insertAdjacentHTML("afterend", `<p class="closing-line">${esc(C.closing.line)}</p>`);
+    if (media.closing) { closing.insertAdjacentHTML("afterbegin", `<div class="vbg" id="closeVideo"></div>`); if (W.mountVideo($("#closeVideo"), media.closing)) closing.classList.add("has-video"); }
+  }
+  if ("IntersectionObserver" in window) {
+    const vio = new IntersectionObserver(es => es.forEach(en => { const v = en.target; v.dataset.vis = en.isIntersecting ? "1" : "0"; if (en.isIntersecting && !reduce) v.play().catch(() => {}); else v.pause(); }), { threshold:.01 });
+    vids.forEach(v => vio.observe(v));
+  } else vids.forEach(v => { v.dataset.vis = "1"; if (!reduce) v.play().catch(() => {}); });
+
   /* ---- sections: order, hide, titles, nav ---- */
   const S = C.sections || {};
   const order = (S.order && S.order.length ? S.order : Object.keys(DEFAULT_TITLES)).filter(k => DEFAULT_TITLES[k]);
   const hide = new Set(S.hide || []);
   const titles = k => Object.assign({}, DEFAULT_TITLES[k], (S.titles || {})[k]);
   const holder = $("#sections");
-  const empty = { couple:!C.couple, story:!(C.story || []).length, gallery:!(C.gallery || []).length, venues:!(C.venues || []).length, faq:!(C.faq || []).length, events:!(C.events || []).length };
+  const empty = { interlude:!media.interlude, couple:!C.couple, story:!(C.story || []).length, gallery:!(C.gallery || []).length, venues:!(C.venues || []).length, faq:!(C.faq || []).length, events:!(C.events || []).length };
   const shown = [];
   $$("[data-sec]").forEach(el => el.hidden = true);
   order.forEach(k => {
@@ -327,7 +386,7 @@ W.init = function(site){
     if (e) e.textContent = t.eyebrow; if (h) h.textContent = t.title;
   });
   const links = $("#links");
-  if (links) links.innerHTML = shown.map(k => `<li><a href="#${k}">${esc(titles(k).nav)}</a></li>`).join("");
+  if (links) links.innerHTML = shown.filter(k => titles(k).nav).map(k => `<li><a href="#${k}">${esc(titles(k).nav)}</a></li>`).join("");
   const rsvpBtn = $("#heroRsvp"); if (rsvpBtn && !shown.includes("rsvp")) rsvpBtn.hidden = true;
 
   /* ---- placeholders ---- */
@@ -500,6 +559,7 @@ W.init = function(site){
     $("#toTop").classList.toggle("show", y > 700);
     const tl = $("#timeline"), fill = $("#tlFill");
     if (tl && fill) { const r = tl.getBoundingClientRect(); fill.style.setProperty("--p", reduce ? 1 : Math.min(1, Math.max(0, (innerHeight * .7 - r.top) / r.height))); }
+    if (!reduce) $$(".vband").forEach(b => { const r = b.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) b.style.setProperty("--par", ((r.top + r.height / 2 - innerHeight / 2) * -0.12).toFixed(1) + "px"); });
     site.onScroll && site.onScroll(y);
   };
   addEventListener("scroll", onScroll, { passive:true }); onScroll();
@@ -539,6 +599,19 @@ W.init = function(site){
   return W;
 };
 
+W.iris = function(){
+  const D = W.D, C = W.C;
+  let el = $("#irisIntro");
+  if (!el) {
+    document.body.insertAdjacentHTML("beforeend", `<div class="intro-iris" id="irisIntro" hidden><div class="ii"><b>${esc((C.names?.first || "")[0] || "")} &amp; ${esc((C.names?.second || "")[0] || "")}</b><small>${esc(C.date?.display || "")}</small><button class="btn solid" type="button" id="irisBtn">Open invitation</button></div></div>`);
+    el = $("#irisIntro");
+  }
+  document.body.classList.remove("go"); el.hidden = false; el.classList.remove("open");
+  let done = false;
+  const open = () => { if (done) return; done = true; el.classList.add("open"); W.start(); setTimeout(() => { el.hidden = true; }, 1600 * (+D.speed || 1)); };
+  $("#irisBtn").onclick = open; el.onclick = e => { if (e.target === el) open(); };
+  clearTimeout(W._irisT); W._irisT = setTimeout(open, 3200);
+};
 W.start = function(){ document.body.classList.add("go"); W.site.onStart && W.site.onStart(); };
 
 /* ---------------- design panel ---------------- */

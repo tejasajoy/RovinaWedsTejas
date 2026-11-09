@@ -108,6 +108,15 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 @keyframes grow{from{transform:scale(0)}}
 @keyframes sway{from{transform:rotate(calc(var(--a) * -1))}to{transform:rotate(var(--a))}}
 .hero .wrap{position:relative;z-index:1}
+.hero{isolation:isolate}
+.hero.has-video{min-height:max(680px,100svh);display:flex;flex-direction:column;justify-content:center;padding:110px 0 90px}
+.hero.has-video .branch,.hero.has-video .plant{display:none}
+.hero .vbg{--veil:linear-gradient(180deg,color-mix(in srgb,var(--bg) 70%,transparent) 0%,color-mix(in srgb,var(--bg) 45%,transparent) 35%,color-mix(in srgb,var(--bg) 50%,transparent) 65%,color-mix(in srgb,var(--bg) 92%,transparent) 100%);background-color:var(--bg)}
+.hero .vbg video{transform:scale(1.08);transition:opacity 1.2s ease,transform calc(14s*var(--speed)) ease-out}
+.go .hero .vbg video{transform:scale(1)}
+.hero.has-video .names{text-shadow:0 2px 24px color-mix(in srgb,var(--bg) 90%,transparent)}
+.hero.has-video .invite,.hero.has-video .parents,.hero.has-video .city{color:color-mix(in srgb,var(--ink) 80%,var(--muted))}
+footer.closing.has-video .tag{font-size:clamp(54px,9vw,96px)}
 .cross{width:34px;height:48px;margin:0 auto 14px;filter:drop-shadow(0 0 12px color-mix(in srgb,var(--gold) 60%,transparent));animation:glow calc(3s*var(--speed)) ease-in-out infinite}
 @keyframes glow{50%{filter:drop-shadow(0 0 22px color-mix(in srgb,var(--gold) 90%,transparent))}}
 .invite{color:var(--muted);max-width:46ch;margin:0 auto;font-family:var(--f-head);font-size:20px;font-style:italic}
@@ -219,6 +228,7 @@ footer p{color:var(--muted)}
 </nav>
 
 <header class="hero" id="home">
+  <div class="vbg" id="heroVideo"></div>
   <svg class="branch" id="branch" viewBox="0 0 520 260" aria-hidden="true"></svg>
   <svg class="plant l" id="plantL" viewBox="0 0 300 340" aria-hidden="true"></svg>
   <svg class="plant r" id="plantR" viewBox="0 0 300 340" aria-hidden="true"></svg>
@@ -303,7 +313,7 @@ footer p{color:var(--muted)}
   </section>
 </main>
 
-<footer>
+<footer class="closing" id="closing">
   <svg class="cross" aria-hidden="true"><use href="#cross"/></svg>
   <p class="tag" id="hashtag"></p>
   <p id="footNames"></p>
@@ -369,14 +379,16 @@ function loop(){
   if (P.length) requestAnimationFrame(loop); else { running = false; cx.clearRect(0, 0, W, H); }
 }
 addEventListener("pointermove", e => { if (Math.abs(e.movementX) > 8) wind = Math.max(-2.5, Math.min(2.5, wind + Math.sign(e.movementX) * .08)); }, { passive:true });
-document.addEventListener("click", e => { if (!e.target.closest("button,a,input,select,textarea,label,#panel,.intro")) burst(e.clientX, e.clientY, 10); });
+document.addEventListener("click", e => { if (!e.target.closest("button,a,input,select,textarea,label,#panel,.intro,.intro-iris")) burst(e.clientX, e.clientY, 10); });
 
 /* ---------- intros ---------- */
 let introTimer;
 function playIntro(force){
   const D = WS.D;
   $$(".intro").forEach(el => { el.hidden = true; el.classList.remove("opening", "leave"); });
+  const ir = $("#irisIntro"); if (ir) ir.hidden = true;
   if (D.intro === "none" || reduce) { WS.start(); return; }
+  if (D.intro === "iris") { WS.iris(); return; }
   const el = D.intro === "curtain" ? $("#curtIntro") : $("#envIntro");
   document.body.classList.remove("go"); el.hidden = false;
   let done = false; const sp = +D.speed || 1;
@@ -447,7 +459,7 @@ WS.init({
     midnight: { name:"Midnight sakura", bg:"#1b1428", bg2:"#271d39", ink:"#f8eef3", muted:"#bfadc8", soft:"#f3a6c0", accent:"#ff7aa6", gold:"#e3c07a", leaf:"#3f6b55", leaf2:"#6a9a7d", dark:true },
   },
   swatch: t => `linear-gradient(135deg,${t.bg} 0 40%,${t.accent} 40% 70%,${t.leaf} 70%)`,
-  intros: [["envelope","Envelope with wax seal"],["curtain","Silk curtains part"],["none","No opening animation"]],
+  intros: [["envelope","Envelope with wax seal"],["curtain","Silk curtains part"],["iris","Open from a circle"],["none","No opening animation"]],
   ambients: [["petals","Falling sakura petals"],["petals-fireflies","Petals + golden fireflies"],["fireflies","Golden fireflies"],["none","None"]],
   venueArt: i => i === 0 ? churchArt() : hallArt(),
   onTheme: t => { petalColors = [t.soft, mix(t.soft, "#ffffff", .45), mix(t.soft, t.accent, .3)]; gold = t.gold; P.forEach(p => { if (p.k === "p") p.c = petalColors[Math.random()*petalColors.length | 0]; }); },

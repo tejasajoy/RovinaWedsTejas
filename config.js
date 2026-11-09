@@ -168,12 +168,46 @@ window.WEDDING = {
     ["Can I take photos?", "Please keep phones away during the ceremony. At the reception, snap away and use our hashtag!"],
   ],
 
-  /* ---------- 10. SECTIONS: order, hide, rename ----------
+  /* ---------- 10. VIDEOS ----------
+     Each design has 3 video spots:
+       hero      – full screen behind your names at the top
+       interlude – a full-width band in the middle of the page with a verse on it
+       closing   – the last screen, behind the hashtag
+     A spot can be:
+       "videos/web/clip.mp4"                                  one video for every screen
+       { wide: "videos/web/a.mp4", tall: "videos/web/b.mp4" }  wide for laptops, tall for phones
+       ""                                                     no video in that spot
+     Ready-made web versions of your uploads are in videos/web.
+     To use a new video, upload it to the videos folder and write its path here
+     (Claude can shrink big files for you; a picture with the same name ending .jpg
+     is shown while the video loads).                                                  */
+  media: {
+    ocean: {
+      hero:      { wide: "videos/web/sunset-wide.mp4", tall: "videos/web/sunset-tall.mp4" },
+      interlude: "videos/web/shore-top.mp4",
+      closing:   "videos/web/sakura.mp4",
+    },
+    sakura: {
+      hero:      "videos/web/sakura.mp4",
+      interlude: "videos/web/shore-top.mp4",
+      closing:   { wide: "videos/web/sunset-wide.mp4", tall: "videos/web/sunset-tall.mp4" },
+    },
+  },
+  interlude: {
+    text: "Many waters cannot quench love, neither can the floods drown it.",
+    ref:  "Song of Solomon 8:7",
+  },
+  closing: {
+    line: "We can't wait to celebrate with you",
+  },
+
+  /* ---------- 11. SECTIONS: order, hide, rename ----------
      order: the order sections appear on the page (and in the menu).
      hide:  put a section name here to hide it, e.g. hide: ["story", "faq"],
-     titles: change the small line (eyebrow), the big title, and the menu word.  */
+     titles: change the small line (eyebrow), the big title, and the menu word.
+     "interlude" is the video band; move it anywhere in the order, or hide it.  */
   sections: {
-    order: ["couple", "events", "story", "gallery", "venues", "rsvp", "faq"],
+    order: ["couple", "events", "story", "interlude", "gallery", "venues", "rsvp", "faq"],
     hide:  [],
     titles: {
       couple:  { eyebrow: "Meet",         title: "The Bride & Groom",  nav: "Couple" },
@@ -186,17 +220,17 @@ window.WEDDING = {
     },
   },
 
-  /* ---------- 11. LOOK & FEEL ----------
+  /* ---------- 12. LOOK & FEEL ----------
      Easiest way: keep designPanel: true, click "Design" on the site, try things,
      then press "Copy settings" and paste over this whole design: { ... } block.
 
      style:   "ocean" or "sakura"
      theme:   ocean  → "golden", "dawn", "tropical", "dusk", "pearl"
               sakura → "sakura", "ivory", "lavender", "peacock", "midnight"
-     intro:   ocean  → "sunrise", "tide", "none"
-              sakura → "envelope", "curtain", "none"
+     intro:   ocean  → "dawn" (fades up from dark), "iris" (opens from a circle), "none"
+              sakura → "envelope", "curtain", "iris", "none"
      reveal:  "mixed", "up", "blur", "zoom", "slide", "flip", "none"
-     ambient: ocean  → "both", "sparkles", "birds", "none"
+     ambient: ocean  → "glow" (golden light specks), "petals" (sakura petals), "both", "none"
               sakura → "petals", "petals-fireflies", "fireflies", "none"
      amount:  how much background effect, 0 to 100
      speed:   0.6 = faster, 1 = normal, 1.5 = slower                         */
@@ -208,9 +242,9 @@ window.WEDDING = {
       heading: "Cormorant Garamond",  // section titles
       body:    "Mulish",              // normal text
     },
-    intro: "sunrise",
+    intro: "dawn",
     reveal: "mixed",
-    ambient: "both",
+    ambient: "glow",
     amount: 40,
     speed: 1,
     music: null,              // e.g. "music/song.mp3" (upload the file first) or null

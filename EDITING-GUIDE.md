@@ -4,8 +4,8 @@ There are **two designs**, and both read the same settings file:
 
 | Design | File | Look |
 |---|---|---|
-| **Ocean sunrise** | `ocean.html` | Golden-hour sun rising over the sea, palms, seagulls, sparkles on the water |
-| **Sakura blossom** | `sakura.html` | Cherry blossoms, swaying leaves and jasmine, gold paisley dividers |
+| **Ocean sunrise** | `ocean.html` | Opens on real golden-hour sea footage, a drone shoreline band mid-page, and ends on cherry blossoms |
+| **Sakura blossom** | `sakura.html` | Opens on real cherry-blossom footage, the same shoreline band, and ends on the golden sea |
 
 You only ever edit **one file: `config.js`**. Names, dates, events, photos, the bride & groom section, fonts, colours and animations all come from there. Type something once and it shows in both designs.
 
@@ -46,8 +46,9 @@ If the site shows a red box saying **"config.js could not be read"**, one of the
 | 7 | `venues` | The church and reception cards with map buttons. |
 | 8 | `rsvp` | `whatsapp` is the number that receives replies: write `91` + 10 digits, with no spaces or +. |
 | 9 | `faq` | Each line is `["Question?", "Answer."],` |
-| 10 | `sections` | **Order, hide or rename sections** (see below). |
-| 11 | `design` | Design, colours, fonts, animations (see section 4). |
+| 10 | `media`, `interlude`, `closing` | **Videos** (see section 3b) plus the verse on the middle video band and the line on the last screen. |
+| 11 | `sections` | **Order, hide or rename sections** (see below). |
+| 12 | `design` | Design, colours, fonts, animations (see section 4). |
 
 **Event icons:** `ring`, `church`, `glass`, `heart`, `dove`, `leaf`, `music`, `cake`, `sun`, `wave`.
 
@@ -64,6 +65,7 @@ sections: {
 },
 ```
 
+- **The video band** is called `interlude`. Move it anywhere in `order`, or put it in `hide`.
 - **Move a section:** move its name in `order`. The menu at the top follows the same order.
 - **Hide a section:** add its name to `hide`.
 - **Rename:** `eyebrow` is the small gold line, `title` is the big calligraphy title, `nav` is the word in the top menu.
@@ -81,6 +83,46 @@ sections: {
    - Gallery: `{ src: "photos/goa-trip.jpg", caption: "Goa, 2023" },`
 
 **Tip:** shrink photos to about 1600px wide first (free on squoosh.app). Large phone photos make the site slow for guests. Portrait (tall) photos look best in the bride & groom arches.
+
+---
+
+## 3b. Videos
+
+Each design has **3 video spots**:
+
+| Spot | Where it shows |
+|---|---|
+| `hero` | Full screen behind your names at the top |
+| `interlude` | A full-width band in the middle of the page, with a verse on it |
+| `closing` | The last screen, behind your hashtag |
+
+What's set up now:
+
+| | Ocean design | Sakura design |
+|---|---|---|
+| hero | golden sea (wide on laptops, tall on phones) | cherry blossoms |
+| interlude | drone shoreline | drone shoreline |
+| closing | cherry blossoms | golden sea |
+
+**Swapping videos:** in `config.js` → `media`, change the path. A spot can be:
+- `"videos/web/sakura.mp4"`: one video for every screen
+- `{ wide: "videos/web/a.mp4", tall: "videos/web/b.mp4" }`: wide on laptops, tall on phones
+- `""`: no video in that spot
+
+**Ready-to-use web versions** of your uploads are in `videos/web`:
+
+| File | From your upload | Size |
+|---|---|---|
+| `sunset-wide.mp4` | waves with sunset | 3.5 MB |
+| `sunset-tall.mp4` | waves tall | 1.3 MB |
+| `shore-top.mp4` | waves wide | 3.2 MB |
+| `sakura.mp4` | sakura flowers | 1.8 MB |
+
+These are compressed for phones and trimmed so the loop is seamless. Each has a matching `.jpg` that shows while the video loads. Your original uploads stay in `videos` and aren't used by the site.
+
+**Adding a new video:** upload it to the `videos` folder. **Give it its final name before uploading.** Renaming videos on GitHub's website breaks the file. Then either:
+- ask Claude to prepare it (compress, loop, make the picture), or
+- point to it directly, e.g. `hero: "videos/my-clip.mp4"`. It will work, but large files load slowly on phones.
 
 ---
 
@@ -108,8 +150,8 @@ Changes in the panel are only a preview. They stay only once you paste them into
 | Setting | Ocean | Sakura |
 |---|---|---|
 | `theme` | `golden`, `dawn`, `tropical`, `dusk`, `pearl` | `sakura`, `ivory`, `lavender`, `peacock`, `midnight` |
-| `intro` (opening) | `sunrise` (sun rises from the sea), `tide` (a wave washes away), `none` | `envelope` (wax seal), `curtain` (silk curtains part), `none` |
-| `ambient` (background) | `both`, `sparkles`, `birds`, `none` | `petals`, `petals-fireflies`, `fireflies`, `none` |
+| `intro` (opening) | `dawn` (fades up from darkness with a warm glow), `iris` (opens from a circle), `none` | `envelope` (wax seal), `curtain` (silk curtains part), `iris`, `none` |
+| `ambient` (floating effect) | `glow` (golden light specks), `petals` (sakura petals), `both`, `none` | `petals`, `petals-fireflies`, `fireflies`, `none` |
 | `reveal` (scroll) | `mixed`, `up`, `blur`, `zoom`, `slide`, `flip`, `none` | same |
 | `amount` | 0 (off) to 100 (lots) | same |
 | `speed` | 0.6 faster · 1 normal · 1.5 slower | same |
@@ -157,4 +199,4 @@ Upload an `.mp3` into a folder called `music`, then set `music: "music/your-song
 **If the website link doesn't work yet:** go to **Settings → Pages**, under "Branch" choose **main** and **/ (root)**, then **Save**. Wait 1–2 minutes.
 
 ### Files you can ignore
-`index.html` (just opens your chosen design), `ocean.html`, `sakura.html` and `shared.js` hold the designs and animations. You don't need to touch them.
+`index.html` (just opens your chosen design), `ocean.html`, `sakura.html` and `shared.js` hold the designs and animations. You don't need to touch them. The original videos in `videos` can stay; the site uses the versions in `videos/web`.
