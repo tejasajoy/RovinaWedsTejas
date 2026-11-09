@@ -19,7 +19,8 @@ window.WEDDING = {
     second: "Tejas A",
   },
   parents: {
-    first:  "Daughter of Mr. Prakasham Bedre & Mrs Lalitha Bedre",   // or "" to hide
+    first:  "Daughter of Mr. Prakasham Bedre & Mrs Lalitha Bedre",  // or "" to hide
+     
     second: "Son of Mr. Anand R & & Mrs. Pushpaltha J",        // or "" to hide
   },
   inviteLine: "By the grace of Our Lord Christ and together with their families, request the honour of your presence at their marriage",
@@ -36,12 +37,12 @@ window.WEDDING = {
 
   /* ---------- 2. THE BIG DAY ---------- */
   date: {
-    display: "|Friday | 5 February 2027 |",       // shown on the page, write it any way you like
+    display: "| Friday | 5 February 2027 |",       // shown on the page, write it any way you like
     start:   "2027-02-05T14:00:00+05:30",       // countdown + calendar. Format: YYYY-MM-DDTHH:MM:00+05:30
     end:     "2027-02-05T23:00:00+05:30",
   },
   city:    "Hubli, Karnataka",
-  hashtag: "#Rovina∞Tejas",
+  hashtag: "#Rovina + Tejas",
 
   /* ---------- 3. BRIDE & GROOM SECTION ----------
      photo: upload to the "photos" folder and write e.g. "photos/rovina.jpg", or null.
@@ -52,7 +53,7 @@ window.WEDDING = {
       fullName: "Rovina B",
       role:     "The Bride",
       photo:    null,
-      about:    "A few lines about the bride: where she grew up, what she does, what makes her laugh and what she loves most about Tejas.",
+      about:    "Coffee, food and Vision. She never said what she loves most about Tejas.",
       facts:    ["Coffee or chai?", "Favourite place", "Hidden talent"],
     },
     groom: {
@@ -60,7 +61,7 @@ window.WEDDING = {
       fullName: "Tejas A",
       role:     "The Groom",
       photo:    null,
-      about:    "A few lines about the groom: Born & raised in Bangalore, works for Aerospace, his hobbies and the moment he knew Rovina was the one.",
+      about:    "Born & raised in Bangalore. Aerospace. The moment I knew Rovina was the one, Fairfield !",
       facts:    ["F1, MotoGP", "Best cook at home", "Always early"],
     },
     together: "Two hearts, one faith, one journey",   // line between the two, or "" to hide
@@ -74,9 +75,9 @@ window.WEDDING = {
   events: [
     {
       name: "Engagement",
-      date: "Sun, 10 January 2027",
-      time: "5:00 PM",
-      venue: "Venue name",
+      date: "Sat, 10 October 2027",
+      time: "7:00 PM",
+      venue: "Hubli",
       mapsQuery: "",                       // what you'd type in Google Maps, or "" to hide the button
       dress: "Pastels",
       color: "#f6b8c8",
@@ -84,44 +85,33 @@ window.WEDDING = {
       note: "Ring ceremony followed by dinner",
     },
     {
-      name: "Roce / Haldi",
-      date: "Thu, 4 February 2027",
-      time: "4:00 PM",
+      name: "Sangeeth",
+      date: "Wed, 5 February 2027",
+      time: "7:00 PM",
       venue: "Family home",
       mapsQuery: "",
-      dress: "White & yellow",
+      dress: "Party Wear",
       color: "#f3cf55",
-      icon: "leaf",
-      note: "Delete this event if you are not having it",
-    },
-    {
-      name: "Sangeet",
-      date: "Wed, 3 February 2027",
-      time: "7:00 PM",
-      venue: "Venue name",
-      mapsQuery: "",
-      dress: "Glam & sparkle",
-      color: "#b48cf2",
       icon: "dance",
       note: "Music, dance performances and dinner",
     },
     {
       name: "Holy Matrimony",
-      date: "Sat, 6 February 2027",
-      time: "10:30 AM",
-      venue: "St. Mary's Basilica",
-      mapsQuery: "St. Mary's Basilica Shivajinagar Bengaluru",
-      dress: "Traditional / formal",
+      date: "Friday, 5 February 2027",
+      time: "1:00 PM",
+      venue: "Agape Church",
+      mapsQuery: "Agape Church Hubli",
+      dress: "Traditional / Formal",
       color: "#ffffff",
       icon: "church",
-      note: "Nuptial Mass. Please be seated by 10:15 AM",
+      note: "Please be seated by 1:30 PM ",
     },
     {
       name: "Reception",
-      date: "Sat, 6 February 2027",
+      date: "Friday, 5 February 2027",
       time: "7:00 PM",
       venue: "Reception venue",
-      mapsQuery: "",
+      mapsQuery: "The Grand Lawns Hubli",
       dress: "Evening wear",
       color: "#c84a74",
       icon: "glass",
@@ -131,8 +121,8 @@ window.WEDDING = {
 
   /* ---------- 5. OUR STORY ---------- */
   story: [
-    { when: "2019", title: "We met",       text: "Write a line or two about how you first met.",       photo: null },
-    { when: "2022", title: "First trip",   text: "A favourite memory, a trip or an inside joke.",      photo: null },
+    { when: "2026", title: "We met",       text: "Write a line or two about how you first met.",       photo: null },
+    { when: "2026", title: "First selfie",   text: "A favourite memory, a trip or an inside joke.",      photo: null },
     { when: "2026", title: "She said yes", text: "How the question was asked, and who cried first.",  photo: null },
   ],
 
@@ -152,17 +142,17 @@ window.WEDDING = {
   venues: [
     {
       label: "The Ceremony",
-      name: "St. Mary's Basilica",
-      address: "Shivajinagar, Bengaluru, Karnataka 560001",
-      mapsQuery: "St. Mary's Basilica Shivajinagar Bengaluru",
-      tips: ["Parking is limited, carpooling helps", "Mass begins on time, please arrive early"],
+      name: "Agape Church",
+      address: "Hubli, Karnataka",
+      mapsQuery: "Agape Church Hubli",
+      tips: ["Service begins at 1:00 PM", "Please be seated by 1:30 PM"],
     },
     {
       label: "The Reception",
-      name: "Reception venue",
-      address: "Address goes here",
-      mapsQuery: "",
-      tips: ["Valet parking available", "Dinner is served from 8:00 PM"],
+      name: "The Grand Lawns",
+      address: "Hubli, Karnataka",
+      mapsQuery: "The Grand Lawns Hubli",
+      tips: ["Reception from 7:00 PM", "Dinner, toasts and dancing"],
     },
   ],
 
