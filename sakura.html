@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rovina &amp; Tejas</title>
+<meta name="description" content="Rovina & Tejas are getting married. Event details, venues and RSVP.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- To change text, fonts or colours, edit config.js — not this file. -->
+<script src="config.js"></script>
+<script src="shared.js"></script>
+<style>
+/* Layout idea: a soft sakura garden. Blossom branch above, swaying leaves and jasmine below, gold paisley dividers between sections; Christian symbols (cross, verse, church, doves) carry the ceremony. */
+:root{
+  --bg:#fff6f7; --bg2:#ffffff; --ink:#3d1e33; --muted:#8a6878;
+  --soft:#f6b8c8; --accent:#c84a74; --gold:#b98d3e; --leaf:#5d8c66; --leaf2:#93bf8f;
+  --accent-ink:#fff;
+  --line:color-mix(in srgb, var(--accent) 22%, transparent);
+  --f-script:"Great Vibes", cursive; --f-head:"Cormorant Garamond", Georgia, serif; --f-body:"Mulish", "Segoe UI", system-ui, sans-serif;
+  --speed:1; color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.7;overflow-x:hidden;transition:background .6s,color .6s}
+h1,h2,h3{font-family:var(--f-head);font-weight:600;line-height:1.15;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:var(--accent)}
+button{font:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+section{padding:96px 0;position:relative}
+.center{text-align:center}
+.eyebrow{font-size:12.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.sec-title{font-family:var(--f-script);font-weight:400;font-size:clamp(48px,8vw,82px);color:var(--accent);margin:4px 0 10px;line-height:1.15}
+.lede{color:var(--muted);max-width:60ch;margin-inline:auto}
+section:nth-of-type(even){background:color-mix(in srgb,var(--soft) 12%,var(--bg))}
+
+/* nav */
+#progress{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,var(--soft),var(--accent),var(--gold));z-index:70}
+nav{position:fixed;top:0;left:0;right:0;z-index:60;transition:transform .45s cubic-bezier(.2,.8,.2,1),background .4s,box-shadow .4s}
+nav.solid{background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(12px);box-shadow:0 1px 0 var(--line)}
+nav.hide{transform:translateY(-100%)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.mono{font-family:var(--f-script);font-size:32px;color:var(--accent);text-decoration:none;line-height:1}
+.links{display:flex;gap:22px;list-style:none;margin:0;padding:0}
+.links a{color:var(--ink);text-decoration:none;font-size:14px;letter-spacing:.08em;position:relative;padding:4px 0}
+.links a::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;border-radius:2px;background:var(--accent);transform:scaleX(0);transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.links a:hover::after,.links a.active::after{transform:scaleX(1)}
+.burger{display:none;background:none;border:0;width:44px;height:44px;cursor:pointer;position:relative}
+.burger span{position:absolute;left:11px;right:11px;height:2px;background:var(--ink);border-radius:2px;transition:transform .4s,opacity .3s}
+.burger span:nth-child(1){top:15px}.burger span:nth-child(2){top:21px}.burger span:nth-child(3){top:27px}
+.burger.x span:nth-child(1){transform:translateY(6px) rotate(45deg)}.burger.x span:nth-child(2){opacity:0}.burger.x span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+@media (max-width:860px){
+  .burger{display:block}
+  .links{position:fixed;inset:64px 0 auto 0;flex-direction:column;gap:0;background:var(--bg2);box-shadow:0 20px 40px rgba(0,0,0,.08);clip-path:inset(0 0 100% 0);transition:clip-path .5s cubic-bezier(.2,.8,.2,1)}
+  .links.open{clip-path:inset(0 0 0 0)}
+  .links a{display:block;padding:16px 24px;border-bottom:1px solid var(--line)}
+  .links a::after{display:none}
+}
+
+/* intro: envelope */
+.intro{position:fixed;inset:0;z-index:100;display:grid;place-items:center}
+.intro.leave{opacity:0;transform:scale(1.15);pointer-events:none;transition:opacity calc(.8s*var(--speed)),transform calc(.9s*var(--speed))}
+#envIntro{background:radial-gradient(circle at 50% 40%,var(--bg2),var(--bg))}
+.env{position:relative;width:min(340px,82vw);aspect-ratio:3/2;perspective:1200px;margin-bottom:40px}
+.env-back,.env-front,.flap{position:absolute;inset:0;border-radius:10px}
+.env-back{background:color-mix(in srgb,var(--soft) 70%,var(--bg2))}
+.letter{position:absolute;left:7%;right:7%;top:8%;bottom:6%;background:var(--bg2);border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,.08);display:grid;place-items:center;text-align:center;transition:transform calc(.9s*var(--speed)) cubic-bezier(.2,.8,.2,1) calc(.7s*var(--speed));z-index:1}
+.letter b{font-family:var(--f-script);font-weight:400;font-size:40px;color:var(--accent);display:block;line-height:1.1}
+.letter small{color:var(--muted);letter-spacing:.2em;font-size:11px;text-transform:uppercase}
+.env-front{background:linear-gradient(160deg,color-mix(in srgb,var(--soft) 55%,var(--bg2)),var(--soft));clip-path:polygon(0 0,50% 56%,100% 0,100% 100%,0 100%);z-index:2}
+.flap{background:linear-gradient(180deg,color-mix(in srgb,var(--soft) 85%,var(--accent)),var(--soft));clip-path:polygon(0 0,100% 0,50% 62%);transform-origin:top;transition:transform calc(.7s*var(--speed)) cubic-bezier(.5,0,.2,1) calc(.25s*var(--speed));z-index:3}
+.seal{position:absolute;left:50%;top:62%;width:66px;height:66px;transform:translate(-50%,-50%);border-radius:50%;border:0;cursor:pointer;z-index:4;background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--accent) 70%,#fff),var(--accent) 60%,color-mix(in srgb,var(--accent) 70%,#000));box-shadow:0 4px 12px rgba(0,0,0,.25),inset 0 0 0 4px color-mix(in srgb,var(--accent) 80%,#000);display:grid;place-items:center;transition:transform .45s cubic-bezier(.5,-0.5,.5,1.5),opacity .4s}
+.seal svg{width:28px;height:28px}
+.tap{position:absolute;bottom:16%;left:0;right:0;text-align:center;color:var(--muted);letter-spacing:.2em;font-size:12px;text-transform:uppercase;animation:breathe 2.4s ease-in-out infinite}
+@keyframes breathe{50%{opacity:.35}}
+#envIntro.opening .seal{transform:translate(-50%,-50%) scale(0) rotate(90deg);opacity:0}
+#envIntro.opening .flap{transform:rotateX(180deg);z-index:0}
+#envIntro.opening .letter{transform:translateY(-58%)}
+#envIntro.opening .tap{opacity:0}
+/* intro: curtain */
+#curtIntro{display:flex}
+#curtIntro .half{flex:1;position:relative;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--soft) 80%,var(--accent)) 0 18px,var(--soft) 18px 40px);box-shadow:inset 0 -30px 60px rgba(0,0,0,.08);transition:transform calc(1.4s*var(--speed)) cubic-bezier(.7,0,.2,1)}
+#curtIntro .half::after{content:"";position:absolute;top:0;bottom:0;width:10px;background:linear-gradient(var(--gold),color-mix(in srgb,var(--gold) 60%,#fff),var(--gold))}
+#curtIntro .half.l::after{right:0}#curtIntro .half.r::after{left:0}
+#curtIntro .knot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:14px;z-index:2;transition:opacity .4s}
+#curtIntro .knot b{font-family:var(--f-script);font-weight:400;font-size:64px;color:var(--bg2);text-shadow:0 2px 14px rgba(0,0,0,.25)}
+#curtIntro.opening .l{transform:translateX(-102%)}#curtIntro.opening .r{transform:translateX(102%)}
+#curtIntro.opening .knot{opacity:0}
+#curtIntro.leave{opacity:1;transform:none}
+.open-btn{background:var(--bg2);color:var(--accent);border:0;border-radius:999px;padding:12px 26px;font:700 13px var(--f-body);letter-spacing:.16em;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.15);animation:breathe 2.4s ease-in-out infinite}
+
+/* canvas */
+#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+
+/* hero */
+.hero{padding:150px 0 140px;text-align:center;overflow:hidden;position:relative}
+.branch{position:absolute;left:-40px;top:60px;width:min(520px,70vw);pointer-events:none}
+.branch path.stem{stroke-dasharray:900;stroke-dashoffset:900;animation:draw calc(2.4s*var(--speed)) cubic-bezier(.4,0,.2,1) forwards .2s}
+.branch .bloom{transform-box:fill-box;transform-origin:center;transform:scale(0);animation:bloom calc(.9s*var(--speed)) cubic-bezier(.3,1.6,.5,1) forwards;animation-delay:calc(var(--d) * var(--speed))}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes bloom{0%{transform:scale(0) rotate(-60deg)}100%{transform:scale(1) rotate(0)}}
+.plant{position:absolute;bottom:-6px;width:min(330px,42vw);pointer-events:none}
+.plant.l{left:-30px}.plant.r{right:-30px;transform:scaleX(-1)}
+.plant .grow{transform-origin:50% 100%;transform-box:fill-box;animation:grow calc(1.6s*var(--speed)) cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--g) * var(--speed))}
+.plant .sw{transform-box:fill-box;transform-origin:50% 100%;animation:sway calc(var(--t) * var(--speed)) ease-in-out infinite alternate;animation-delay:var(--d)}
+@keyframes grow{from{transform:scale(0)}}
+@keyframes sway{from{transform:rotate(calc(var(--a) * -1))}to{transform:rotate(var(--a))}}
+.hero .wrap{position:relative;z-index:1}
+.cross{width:34px;height:48px;margin:0 auto 14px;filter:drop-shadow(0 0 12px color-mix(in srgb,var(--gold) 60%,transparent));animation:glow calc(3s*var(--speed)) ease-in-out infinite}
+@keyframes glow{50%{filter:drop-shadow(0 0 22px color-mix(in srgb,var(--gold) 90%,transparent))}}
+.invite{color:var(--muted);max-width:46ch;margin:0 auto;font-family:var(--f-head);font-size:20px;font-style:italic}
+.names{font-family:var(--f-script);font-weight:400;color:var(--accent);font-size:clamp(70px,14vw,150px);line-height:1.1;margin:18px 0 4px}
+.names .ch{display:inline-block;animation:inkIn calc(1.1s*var(--speed)) cubic-bezier(.2,.8,.2,1) both;animation-delay:calc((var(--i) * 70ms + 400ms) * var(--speed))}
+.names .amp{font-size:.55em;color:var(--gold);padding:0 .15em;vertical-align:.25em}
+@keyframes inkIn{from{opacity:0;filter:blur(12px);transform:translateY(30px) scale(1.2)}}
+.parents{display:flex;justify-content:center;gap:6px 40px;flex-wrap:wrap;color:var(--muted);font-size:14px;margin-bottom:22px}
+.date-line{font-family:var(--f-head);font-size:clamp(22px,3vw,28px);letter-spacing:.08em}
+.city{color:var(--muted);letter-spacing:.18em;text-transform:uppercase;font-size:13px;margin-top:4px}
+.verse{margin:30px auto 0;max-width:48ch;font-family:var(--f-head);font-style:italic;font-size:21px}
+.verse .w{display:inline-block;animation:wordIn calc(.8s*var(--speed)) ease both;animation-delay:calc((var(--i) * 90ms + 1600ms) * var(--speed))}
+.verse cite{display:block;font-style:normal;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-top:8px;font-family:var(--f-body)}
+@keyframes wordIn{from{opacity:0;transform:translateY(10px)}}
+.js body:not(.go) .hero *{animation-play-state:paused!important}
+.countdown{display:flex;justify-content:center;gap:12px;margin:40px 0 32px;flex-wrap:wrap}
+.unit{width:96px;padding:14px 6px 10px;border-radius:16px;background:var(--bg2);box-shadow:0 10px 30px color-mix(in srgb,var(--accent) 14%,transparent);perspective:400px}
+.unit b{display:block;font-family:var(--f-head);font-size:46px;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.unit b.flip{animation:flipNum .55s cubic-bezier(.3,1.4,.6,1)}
+@keyframes flipNum{0%{transform:rotateX(90deg);opacity:.2}100%{transform:none}}
+.unit span{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* divider */
+.divider{display:block;width:min(360px,80%);height:auto;margin:0 auto 18px}
+.divider path,.divider circle{stroke-dasharray:600;stroke-dashoffset:600;transition:stroke-dashoffset calc(2s*var(--speed)) ease}
+.divider.in path,.divider.in circle,html:not(.js) .divider path,.no-reveal .divider path,.no-reveal .divider circle{stroke-dashoffset:0}
+
+/* couple portraits get a sakura frame */
+.portrait{border:6px solid var(--bg2)}
+.couple .person:nth-child(1) .portrait{box-shadow:0 0 0 2px var(--soft),0 22px 50px color-mix(in srgb,var(--accent) 18%,transparent)}
+.couple .person:nth-child(3) .portrait{box-shadow:0 0 0 2px var(--gold),0 22px 50px color-mix(in srgb,var(--accent) 18%,transparent)}
+
+/* venue drawings */
+.bell{transform-origin:150px 44px;animation:bell calc(2.6s*var(--speed)) ease-in-out infinite}
+@keyframes bell{0%,60%,100%{transform:rotate(0)}10%{transform:rotate(14deg)}25%{transform:rotate(-12deg)}40%{transform:rotate(6deg)}}
+.dove{animation:fly calc(9s*var(--speed)) linear infinite;animation-delay:var(--d)}
+.dove .wing{transform-origin:10px 6px;animation:flap .5s ease-in-out infinite alternate}
+@keyframes fly{0%{transform:translate(-40px,60px)}100%{transform:translate(360px,-10px)}}
+@keyframes flap{to{transform:scaleY(-.6)}}
+
+footer{text-align:center;padding:70px 20px 110px;position:relative;overflow:hidden}
+footer .tag{font-family:var(--f-script);font-size:clamp(44px,7vw,70px);color:var(--accent);line-height:1.2}
+footer p{color:var(--muted)}
+
+@media (prefers-reduced-motion:reduce){
+  .branch path.stem{stroke-dashoffset:0}.branch .bloom{transform:none}
+  .divider path,.divider circle{stroke-dashoffset:0}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="sakura" viewBox="-20 -20 40 40">
+      <g style="fill:var(--soft);stroke:var(--accent)" stroke-width=".6">
+        <path id="sp" d="M0 0 C-7 -6 -6 -15 -2 -18 L0 -15.5 L2 -18 C6 -15 7 -6 0 0Z"/>
+        <use href="#sp" transform="rotate(72)"/><use href="#sp" transform="rotate(144)"/>
+        <use href="#sp" transform="rotate(216)"/><use href="#sp" transform="rotate(288)"/>
+      </g>
+      <circle r="3" style="fill:var(--gold)"/>
+      <path d="M0 0 L0 -7 M0 0 L6.6 -2.2 M0 0 L4 5.7 M0 0 L-4 5.7 M0 0 L-6.6 -2.2" style="stroke:var(--accent)" stroke-width=".7" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="jasmine" viewBox="-12 -12 24 24">
+      <g fill="#fffdf8" stroke="#e8dcc0" stroke-width=".5">
+        <ellipse cx="0" cy="-6" rx="2.6" ry="5.5"/><ellipse cx="0" cy="-6" rx="2.6" ry="5.5" transform="rotate(72)"/>
+        <ellipse cx="0" cy="-6" rx="2.6" ry="5.5" transform="rotate(144)"/><ellipse cx="0" cy="-6" rx="2.6" ry="5.5" transform="rotate(216)"/>
+        <ellipse cx="0" cy="-6" rx="2.6" ry="5.5" transform="rotate(288)"/>
+      </g><circle r="1.6" fill="#f3d27a"/>
+    </symbol>
+    <symbol id="cross" viewBox="0 0 34 48"><path d="M13 0h8v13h13v8H21v27h-8V21H0v-8h13z" style="fill:var(--gold)"/></symbol>
+    <symbol id="divider" viewBox="0 0 360 40">
+      <g fill="none" style="stroke:var(--gold)" stroke-width="1.3" stroke-linecap="round">
+        <path d="M10 20 H130"/><path d="M230 20 H350"/>
+        <path d="M130 20 C140 4 158 6 160 18 C161 26 150 28 147 22 C145 17 151 14 154 18"/>
+        <path d="M230 20 C220 4 202 6 200 18 C199 26 210 28 213 22 C215 17 209 14 206 18"/>
+        <path d="M180 34 C168 24 168 12 180 4 C192 12 192 24 180 34Z" style="stroke:var(--accent)"/>
+        <path d="M180 34 C172 30 164 22 166 14 M180 34 C188 30 196 22 194 14" style="stroke:var(--accent)"/>
+        <circle cx="70" cy="20" r="3"/><circle cx="290" cy="20" r="3"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="intro" id="envIntro" hidden>
+  <div class="env">
+    <div class="env-back"></div>
+    <div class="letter"><div><b id="introNames">R &amp; T</b><small id="introDate"></small></div></div>
+    <div class="env-front"></div>
+    <div class="flap"></div>
+    <button class="seal" id="seal" type="button" aria-label="Open the invitation"><svg viewBox="0 0 34 48"><path d="M13 0h8v13h13v8H21v27h-8V21H0v-8h13z" fill="#fff" opacity=".92"/></svg></button>
+  </div>
+  <p class="tap">Tap the seal to open</p>
+</div>
+<div class="intro" id="curtIntro" hidden>
+  <div class="half l"></div><div class="half r"></div>
+  <div class="knot"><b id="curtNames">R &amp; T</b><button class="open-btn" id="curtBtn" type="button">Open invitation</button></div>
+</div>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="mono" href="#home" id="mono">R &amp; T</a>
+    <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="links"><span></span><span></span><span></span></button>
+    <ul class="links" id="links"></ul>
+  </div>
+</nav>
+
+<header class="hero" id="home">
+  <svg class="branch" id="branch" viewBox="0 0 520 260" aria-hidden="true"></svg>
+  <svg class="plant l" id="plantL" viewBox="0 0 300 340" aria-hidden="true"></svg>
+  <svg class="plant r" id="plantR" viewBox="0 0 300 340" aria-hidden="true"></svg>
+  <div class="wrap">
+    <svg class="cross" aria-hidden="true"><use href="#cross"/></svg>
+    <p class="invite" id="invite"></p>
+    <h1 class="names" id="names"></h1>
+    <div class="parents" id="parents"></div>
+    <p class="date-line" id="dateLine"></p>
+    <p class="city" id="city"></p>
+    <blockquote class="verse" id="verse"></blockquote>
+    <div class="countdown" aria-label="Countdown to the wedding">
+      <div class="unit"><b id="cd-d">00</b><span>Days</span></div>
+      <div class="unit"><b id="cd-h">00</b><span>Hours</span></div>
+      <div class="unit"><b id="cd-m">00</b><span>Minutes</span></div>
+      <div class="unit"><b id="cd-s">00</b><span>Seconds</span></div>
+    </div>
+    <div class="btns">
+      <a class="btn solid" id="heroRsvp" href="#rsvp">RSVP</a>
+      <a class="btn ghost" id="calBtn" href="#" target="_blank" rel="noopener">Add to calendar</a>
+    </div>
+  </div>
+</header>
+
+<main id="sections">
+  <section id="couple" data-sec="couple">
+    <div class="wrap center">
+      <svg class="divider" data-draw aria-hidden="true"><use href="#divider"/></svg>
+      <p class="eyebrow" data-t="eyebrow" data-anim="up"></p>
+      <h2 class="sec-title" data-t="title" data-anim="blur"></h2>
+      <div id="coupleGrid"></div>
+    </div>
+  </section>
+  <section id="events" data-sec="events">
+    <div class="wrap center">
+      <svg class="divider" data-draw aria-hidden="true"><use href="#divider"/></svg>
+      <p class="eyebrow" data-t="eyebrow" data-anim="up"></p>
+      <h2 class="sec-title" data-t="title" data-anim="blur"></h2>
+    </div>
+    <div class="wrap"><div class="tl" id="timeline"><div class="tl-line"></div><div class="tl-fill" id="tlFill"></div></div></div>
+  </section>
+  <section id="story" data-sec="story">
+    <div class="wrap center">
+      <svg class="divider" data-draw aria-hidden="true"><use href="#divider"/></svg>
+      <p class="eyebrow" data-t="eyebrow" data-anim="up"></p>
+      <h2 class="sec-title" data-t="title" data-anim="blur"></h2>
+      <div class="story" id="storyGrid"></div>
+    </div>
+  </section>
+  <section id="gallery" data-sec="gallery">
+    <div class="wrap center">
+      <svg class="divider" data-draw aria-hidden="true"><use href="#divider"/></svg>
+      <p class="eyebrow" data-t="eyebrow" data-anim="up"></p>
+      <h2 class="sec-title" data-t="title" data-anim="blur"></h2>
+    </div>
+    <div class="wrap"><div class="gallery" id="galleryGrid"></div></div>
+  </section>
+  <section id="venues" data-sec="venues">
+    <div class="wrap center">
+      <svg class="divider" data-draw aria-hidden="true"><use href="#divider"/></svg>
+      <p class="eyebrow" data-t="eyebrow" data-anim="up"></p>
+      <h2 class="sec-title" data-t="title" data-anim="blur"></h2>
+    </div>
+    <div class="wrap"><div class="venues" id="venueGrid"></div></div>
+  </section>
+  <section id="rsvp" data-sec="rsvp">
+    <div class="wrap center">
+      <svg class="divider" data-draw aria-hidden="true"><use href="#divider"/></svg>
+      <p class="eyebrow" data-t="eyebrow" data-anim="up"></p>
+      <h2 class="sec-title" data-t="title" data-anim="blur"></h2>
+      <p class="lede" id="rsvpBy" data-anim="up"></p>
+      <div id="rsvpMount"></div>
+    </div>
+  </section>
+  <section id="faq" data-sec="faq">
+    <div class="wrap center">
+      <svg class="divider" data-draw aria-hidden="true"><use href="#divider"/></svg>
+      <p class="eyebrow" data-t="eyebrow" data-anim="up"></p>
+      <h2 class="sec-title" data-t="title" data-anim="blur"></h2>
+      <div class="faq" id="faqList"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <svg class="cross" aria-hidden="true"><use href="#cross"/></svg>
+  <p class="tag" id="hashtag"></p>
+  <p id="footNames"></p>
+</footer>
+
+<script>
+(function(){
+"use strict";
+const WS = window.WeddingSite; if (!WS) return;
+const { $, $$, reduce } = WS;
+
+/* ---------- canvas effects: petals + fireflies ---------- */
+const cv = $("#fx"), cx = cv.getContext("2d");
+let W = 0, H = 0, dpr = 1, P = [], wind = 0, windT = 0, running = false, petalColors = ["#f6b8c8"], gold = "#e3c07a";
+function size(){ dpr = Math.min(2, devicePixelRatio || 1); W = cv.width = innerWidth * dpr; H = cv.height = innerHeight * dpr; }
+size(); addEventListener("resize", size);
+const mix = (a, b, w) => { const p = h => [1,3,5].map(i => parseInt(h.slice(i, i+2), 16)); const A = p(a), B = p(b); return "#" + A.map((v,i) => Math.round(v*(1-w) + B[i]*w).toString(16).padStart(2,"0")).join(""); };
+function petal(x, y, extra){ return Object.assign({ k:"p", x, y, s:(5 + Math.random()*6) * dpr, vy:(.4 + Math.random()*.8) * dpr, vx:0, sw:Math.random()*6.28, rot:Math.random()*6.28, vr:(Math.random() - .5) * .04, flip:Math.random()*6.28, vf:.02 + Math.random()*.04, c:petalColors[Math.random()*petalColors.length | 0], life:null }, extra); }
+function fly(){ return { k:"f", x:Math.random()*W, y:Math.random()*H, r:(1.5 + Math.random()*2) * dpr, a:Math.random()*6.28, sp:(.2 + Math.random()*.4) * dpr, ph:Math.random()*6.28, life:null }; }
+function setAmbient(kind, amount){
+  const n = reduce ? 0 : Math.max(0, Math.min(100, amount | 0));
+  const wantP = kind.includes("petals") ? Math.round(n * .8) : 0, wantF = kind.includes("fireflies") ? Math.round(n * .45) : 0;
+  const temp = P.filter(p => p.life !== null);
+  let ps = P.filter(p => p.life === null && p.k === "p"), fs = P.filter(p => p.life === null && p.k === "f");
+  ps = ps.slice(0, wantP); while (ps.length < wantP) ps.push(petal(Math.random() * W, Math.random() * H));
+  fs = fs.slice(0, wantF); while (fs.length < wantF) fs.push(fly());
+  P = temp.concat(ps, fs); kick();
+}
+function kick(){ if (!running && P.length && !reduce) { running = true; requestAnimationFrame(loop); } }
+function burst(x, y, n){
+  if (reduce) return;
+  for (let i = 0; i < n; i++) { const a = Math.random() * 6.28, sp = (2 + Math.random() * 7) * dpr; P.push(petal(x * dpr, y * dpr, { vx:Math.cos(a)*sp, vy:Math.sin(a)*sp - 3*dpr, life:220 + Math.random()*80 })); }
+  kick();
+}
+function drawPetal(p){
+  const s = p.s; cx.save(); cx.translate(p.x, p.y); cx.rotate(p.rot); cx.scale(Math.cos(p.flip), 1);
+  cx.beginPath(); cx.moveTo(0, s); cx.bezierCurveTo(-s*1.15, s*.25, -s*.75, -s, -s*.2, -s); cx.lineTo(0, -s*.72); cx.lineTo(s*.2, -s); cx.bezierCurveTo(s*.75, -s, s*1.15, s*.25, 0, s);
+  cx.fillStyle = p.c; cx.globalAlpha = p.life === null ? .85 : Math.min(1, p.life / 60); cx.fill();
+  cx.globalAlpha *= .35; cx.strokeStyle = "#fff"; cx.lineWidth = dpr * .8; cx.beginPath(); cx.moveTo(0, s*.8); cx.lineTo(0, -s*.5); cx.stroke();
+  cx.restore();
+}
+function drawFly(p){
+  p.ph += .03; p.a += (Math.random() - .5) * .25; p.x += Math.cos(p.a) * p.sp; p.y += Math.sin(p.a) * p.sp - .1 * dpr;
+  if (p.y < -10) p.y = H + 10; if (p.y > H + 10) p.y = -10; if (p.x < -10) p.x = W + 10; if (p.x > W + 10) p.x = -10;
+  const al = .25 + .75 * Math.max(0, Math.sin(p.ph));
+  const g = cx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 5);
+  g.addColorStop(0, gold); g.addColorStop(1, "transparent");
+  cx.globalAlpha = al * .6; cx.fillStyle = g; cx.beginPath(); cx.arc(p.x, p.y, p.r * 5, 0, 6.28); cx.fill();
+  cx.globalAlpha = al; cx.fillStyle = "#fff8dc"; cx.beginPath(); cx.arc(p.x, p.y, p.r * .7, 0, 6.28); cx.fill(); cx.globalAlpha = 1;
+}
+function loop(){
+  cx.clearRect(0, 0, W, H);
+  if (--windT < 0) { windT = 200 + Math.random() * 300; wind = (Math.random() - .3) * 1.4; }
+  for (const p of P) {
+    if (p.k === "f") { drawFly(p); continue; }
+    if (p.life !== null) { p.vx *= .97; p.vy = p.vy * .97 + .06 * dpr; p.life--; }
+    p.sw += .02; p.x += p.vx + (Math.sin(p.sw) * .7 + wind) * dpr; p.y += p.vy; p.rot += p.vr; p.flip += p.vf;
+    if (p.life === null && p.y > H + 30) { p.y = -30; p.x = Math.random() * W; }
+    if (p.x > W + 40) p.x = -40; if (p.x < -40) p.x = W + 40;
+    drawPetal(p);
+  }
+  P = P.filter(p => p.life === null || p.life > 0);
+  if (P.length) requestAnimationFrame(loop); else { running = false; cx.clearRect(0, 0, W, H); }
+}
+addEventListener("pointermove", e => { if (Math.abs(e.movementX) > 8) wind = Math.max(-2.5, Math.min(2.5, wind + Math.sign(e.movementX) * .08)); }, { passive:true });
+document.addEventListener("click", e => { if (!e.target.closest("button,a,input,select,textarea,label,#panel,.intro")) burst(e.clientX, e.clientY, 10); });
+
+/* ---------- intros ---------- */
+let introTimer;
+function playIntro(force){
+  const D = WS.D;
+  $$(".intro").forEach(el => { el.hidden = true; el.classList.remove("opening", "leave"); });
+  if (D.intro === "none" || reduce) { WS.start(); return; }
+  const el = D.intro === "curtain" ? $("#curtIntro") : $("#envIntro");
+  document.body.classList.remove("go"); el.hidden = false;
+  let done = false; const sp = +D.speed || 1;
+  const open = () => {
+    if (done) return; done = true; el.classList.add("opening");
+    const t = D.intro === "curtain" ? 600 : 1700;
+    setTimeout(() => { el.classList.add("leave"); burst(innerWidth/2, innerHeight/2, 60); WS.start(); }, t * sp);
+    setTimeout(() => { el.hidden = true; }, (t + 1200) * sp);
+  };
+  $("#seal").onclick = open; $("#curtBtn").onclick = open;
+  el.onclick = e => { if (e.target === el || e.target.classList.contains("half")) open(); };
+  clearTimeout(introTimer); introTimer = setTimeout(open, force ? 2600 : 3200);
+}
+
+/* ---------- venue drawings ---------- */
+const churchArt = () => `<svg viewBox="0 0 300 170" fill="none" style="stroke:var(--accent)" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">
+  <path d="M10 168 H290" style="stroke:var(--gold)"/>
+  <path d="M60 168 V96 L150 40 L240 96 V168"/><path d="M128 168 V60 L150 40 L172 60 V168"/>
+  <path d="M150 40 V14 M141 22 H159" style="stroke:var(--gold)" stroke-width="2.4"/>
+  <g class="bell"><path d="M144 52 C144 46 156 46 156 52 V58 H144 Z" style="fill:var(--gold);stroke:none"/><circle cx="150" cy="60" r="2" style="fill:var(--gold);stroke:none"/></g>
+  <path d="M140 168 V138 A10 10 0 0 1 160 138 V168"/>
+  <circle cx="150" cy="98" r="11"/><path d="M150 87 V109 M139 98 H161" stroke-width="1"/>
+  <path d="M85 168 V128 A9 9 0 0 1 103 128 V168 M197 168 V128 A9 9 0 0 1 215 128 V168"/>
+  ${[0, 3.2, 6].map(d => `<g class="dove" style="--d:-${d}s"><g transform="scale(.9)"><path d="M0 8 C6 8 10 6 14 4 L20 6 L14 9 C10 12 4 12 0 8Z" style="fill:var(--bg2);stroke:var(--muted)" stroke-width="1"/><path class="wing" d="M8 6 C10 0 14 -2 16 -1 C14 2 12 5 10 7Z" style="fill:var(--bg2);stroke:var(--muted)" stroke-width="1"/></g></g>`).join("")}
+</svg>`;
+const hallArt = () => `<svg viewBox="0 0 300 170" fill="none" style="stroke:var(--accent)" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true">
+  <path d="M10 168 H290" style="stroke:var(--gold)"/>
+  <path d="M40 168 V90 H260 V168"/><path d="M30 90 Q150 20 270 90" style="stroke:var(--gold)"/>
+  ${[70,110,150,190,230].map((x, i) => `<path d="M${x-12} 168 V118 A12 12 0 0 1 ${x+12} 118 V168"/><use href="#sakura" x="${x-9}" y="${56 + (i % 2) * 10}" width="18" height="18"/>`).join("")}
+  <path d="M30 90 Q60 110 90 92 Q120 112 150 92 Q180 112 210 92 Q240 110 270 90" style="stroke:var(--gold)" stroke-width="1.2"/>
+</svg>`;
+
+/* ---------- hero decorations ---------- */
+(function(){
+  const stem = `<path class="stem" d="M0 40 C90 60 150 40 220 70 C290 100 330 90 400 120 M150 50 C170 20 200 10 230 15 M260 80 C270 120 300 140 330 150 M330 98 C360 70 390 60 420 62" fill="none" style="stroke:color-mix(in srgb,var(--ink) 55%,var(--gold))" stroke-width="3.2" stroke-linecap="round"/>`;
+  const spots = [[150,48,30],[230,15,22],[220,70,34],[290,100,26],[330,150,30],[400,120,36],[420,62,24],[60,52,20],[360,72,18],[300,138,16],[190,25,16],[450,125,20]];
+  $("#branch").innerHTML = stem + spots.map(([x, y, s], i) => `<g class="bloom" style="--d:${(0.7 + i*0.15).toFixed(2)}s"><use href="#sakura" x="${x - s/2}" y="${y - s/2}" width="${s}" height="${s}"/></g>`).join("");
+
+  // plants: broad leaves, fern fronds and jasmine sprigs, all swaying
+  const leaf = (L, w) => `<path d="M0 0 C${w*.95} ${-L*.22} ${w*.75} ${-L*.78} 0 ${-L} C${-w*.75} ${-L*.78} ${-w*.95} ${-L*.22} 0 0Z"/>` +
+    `<path d="M0 0 L0 ${-L*.96}" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.2"/>` +
+    [.25,.45,.65].map(t => `<path d="M0 ${-L*t} Q${w*.35} ${-L*(t+.08)} ${w*.6} ${-L*(t+.14)} M0 ${-L*t} Q${-w*.35} ${-L*(t+.08)} ${-w*.6} ${-L*(t+.14)}" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1"/>`).join("");
+  const fern = L => { let s = `<path d="M0 0 Q${L*.15} ${-L*.5} 0 ${-L}" fill="none" stroke-width="2.2" style="stroke:var(--leaf)"/>`;
+    for (let i = 1; i < 12; i++) { const t = i / 12, y = -L*t, x = Math.sin(t*Math.PI) * L*.075, l = (1 - t) * 26 + 6;
+      s += `<ellipse cx="${x + l*.55}" cy="${y}" rx="${l*.55}" ry="${l*.2}" transform="rotate(-28 ${x + l*.55} ${y})"/><ellipse cx="${x - l*.55}" cy="${y}" rx="${l*.55}" ry="${l*.2}" transform="rotate(28 ${x - l*.55} ${y})"/>`; }
+    return s; };
+  const sprig = L => `<path d="M0 0 Q8 ${-L*.5} 4 ${-L}" fill="none" stroke-width="1.6" style="stroke:var(--leaf)"/>` +
+    [[4,-L,14],[10,-L*.78,11],[-4,-L*.62,10],[8,-L*.45,9]].map(([x, y, s]) => `<use href="#jasmine" x="${x - s/2}" y="${y - s/2}" width="${s}" height="${s}"/>`).join("") +
+    `<ellipse cx="-6" cy="${-L*.3}" rx="8" ry="3" transform="rotate(-30 -6 ${-L*.3})" style="fill:var(--leaf2)"/>`;
+  const parts = [
+    // [x, angle, kind, length, width, colourVar]
+    [120, -52, "leaf", 190, 70, "--leaf"], [140, -20, "leaf", 250, 78, "--leaf2"], [150, 12, "leaf", 210, 66, "--leaf"],
+    [110, -75, "fern", 200], [165, 38, "fern", 170], [130, -2, "sprig", 230], [95, -35, "sprig", 160], [175, 22, "leaf", 140, 50, "--leaf2"],
+  ];
+  const svg = parts.map(([x, a, k, L, w, c], i) => `<g transform="translate(${x} 340) rotate(${a})"><g class="grow" style="--g:${(0.3 + i*0.12).toFixed(2)}s"><g class="sw" style="--a:${(2 + (i % 3)).toFixed(1)}deg;--t:${(3.2 + (i % 4) * .6).toFixed(1)}s;--d:${(-i * .7).toFixed(1)}s;fill:var(${c || "--leaf"})">${k === "leaf" ? leaf(L, w) : k === "fern" ? fern(L) : sprig(L)}</g></g></g>`).join("");
+  $("#plantL").innerHTML = svg; $("#plantR").innerHTML = svg;
+})();
+
+/* ---------- start ---------- */
+WS.init({
+  key: "sakura",
+  defaultFonts: { script:"Great Vibes", heading:"Cormorant Garamond", body:"Mulish" },
+  themes: {
+    sakura:   { name:"Sakura blush",    bg:"#fff6f7", bg2:"#ffffff", ink:"#3d1e33", muted:"#8a6878", soft:"#f6b8c8", accent:"#c84a74", gold:"#b98d3e", leaf:"#5d8c66", leaf2:"#93bf8f" },
+    ivory:    { name:"Ivory & gold",    bg:"#fbf8f2", bg2:"#ffffff", ink:"#2f2a26", muted:"#7c7266", soft:"#f3c9d3", accent:"#a6566d", gold:"#b0883a", leaf:"#6f8f5e", leaf2:"#a9c08f" },
+    lavender: { name:"Lavender dusk",   bg:"#f7f3fb", bg2:"#ffffff", ink:"#2f2547", muted:"#776c8f", soft:"#ecbcd8", accent:"#8a4fa8", gold:"#c29b4a", leaf:"#6a8f7a", leaf2:"#a3c4b0" },
+    peacock:  { name:"Peacock garden",  bg:"#f2f8f6", bg2:"#ffffff", ink:"#12343b", muted:"#58767a", soft:"#f4b4c6", accent:"#1f7a7a", gold:"#c99a2e", leaf:"#2f7a5a", leaf2:"#6fb08a" },
+    midnight: { name:"Midnight sakura", bg:"#1b1428", bg2:"#271d39", ink:"#f8eef3", muted:"#bfadc8", soft:"#f3a6c0", accent:"#ff7aa6", gold:"#e3c07a", leaf:"#3f6b55", leaf2:"#6a9a7d", dark:true },
+  },
+  swatch: t => `linear-gradient(135deg,${t.bg} 0 40%,${t.accent} 40% 70%,${t.leaf} 70%)`,
+  intros: [["envelope","Envelope with wax seal"],["curtain","Silk curtains part"],["none","No opening animation"]],
+  ambients: [["petals","Falling sakura petals"],["petals-fireflies","Petals + golden fireflies"],["fireflies","Golden fireflies"],["none","None"]],
+  venueArt: i => i === 0 ? churchArt() : hallArt(),
+  onTheme: t => { petalColors = [t.soft, mix(t.soft, "#ffffff", .45), mix(t.soft, t.accent, .3)]; gold = t.gold; P.forEach(p => { if (p.k === "p") p.c = petalColors[Math.random()*petalColors.length | 0]; }); },
+  setAmbient,
+  playIntro,
+  celebrate: (x, y) => burst(x, y, 80),
+  onStart: () => setAmbient(WS.D.ambient, WS.D.amount),
+});
+if (WS.D) { $("#curtNames").innerHTML = $("#mono").innerHTML; playIntro(); }
+})();
+</script>
+</body>
+</html>

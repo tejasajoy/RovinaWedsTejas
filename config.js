@@ -1,7 +1,9 @@
 /* =====================================================================
    ROVINA & TEJAS — WEDDING WEBSITE SETTINGS
    ---------------------------------------------------------------------
-   This is the ONLY file you need to edit.
+   This is the ONLY file you need to edit. Both designs (Sakura and
+   Ocean) read from this file, so you type everything once.
+
    Rules to avoid breaking things:
      • Keep text inside "double quotes".
      • Keep the comma at the end of each line.
@@ -11,7 +13,7 @@
 
 window.WEDDING = {
 
-  /* ---------- 1. THE COUPLE ---------- */
+  /* ---------- 1. THE COUPLE (top of the page) ---------- */
   names: {
     first:  "Rovina",
     second: "Tejas",
@@ -22,10 +24,11 @@ window.WEDDING = {
   },
   inviteLine: "By the grace of God and together with their families, request the honour of your presence at their marriage",
 
-  /* Bible verse shown under the names. Some alternatives:
+  /* Bible verse under the names. Some alternatives:
      "Two are better than one... a threefold cord is not quickly broken." — Ecclesiastes 4:9-12
      "And now abideth faith, hope, charity, these three; but the greatest of these is charity." — 1 Corinthians 13:13
-     "Whither thou goest, I will go; and where thou lodgest, I will lodge." — Ruth 1:16            */
+     "Whither thou goest, I will go; and where thou lodgest, I will lodge." — Ruth 1:16
+     "Many waters cannot quench love, neither can the floods drown it." — Song of Solomon 8:7  (lovely with the Ocean design) */
   verse: {
     text: "Therefore what God hath joined together, let not man put asunder.",
     ref:  "Mark 10:9",
@@ -40,10 +43,33 @@ window.WEDDING = {
   city:    "Bengaluru, Karnataka",
   hashtag: "#RovinaWedsTejas",
 
-  /* ---------- 3. EVENTS ----------
+  /* ---------- 3. BRIDE & GROOM SECTION ----------
+     photo: upload to the "photos" folder and write e.g. "photos/rovina.jpg", or null.
+     facts: little tags under the text. Add or remove as many as you like.          */
+  couple: {
+    bride: {
+      name:     "Rovina",
+      fullName: "Rovina ________",
+      role:     "The Bride",
+      photo:    null,
+      about:    "A few lines about the bride: where she grew up, what she does, what makes her laugh and what she loves most about Tejas.",
+      facts:    ["Coffee or chai?", "Favourite place", "Hidden talent"],
+    },
+    groom: {
+      name:     "Tejas",
+      fullName: "Tejas ________",
+      role:     "The Groom",
+      photo:    null,
+      about:    "A few lines about the groom: his hometown, his work, his hobbies and the moment he knew Rovina was the one.",
+      facts:    ["Cricket or football?", "Best cook at home", "Always late"],
+    },
+    together: "Two hearts, one faith, one journey",   // line between the two, or "" to hide
+  },
+
+  /* ---------- 4. EVENTS ----------
      Add, remove or reorder freely. Copy a whole { ... }, block to add one.
-     icon can be: "ring", "church", "glass", "heart", "dove", "leaf", "music", "cake"
-     color is the little dress-code dot (any colour code).                        */
+     icon: "ring", "church", "glass", "heart", "dove", "leaf", "music", "cake", "sun", "wave"
+     color: the little dress-code dot (any colour code).                                   */
   events: [
     {
       name: "Engagement",
@@ -91,16 +117,14 @@ window.WEDDING = {
     },
   ],
 
-  /* ---------- 4. OUR STORY ----------
-     photo: put a picture in the "photos" folder and write e.g. "photos/met.jpg"
-            or leave null to show a pretty placeholder.                          */
+  /* ---------- 5. OUR STORY ---------- */
   story: [
-    { when: "2019", title: "We met",       text: "Write a line or two about how you first met.",           photo: null },
-    { when: "2022", title: "First trip",   text: "A favourite memory, a trip or an inside joke.",          photo: null },
-    { when: "2026", title: "She said yes", text: "How the question was asked, and who cried first.",      photo: null },
+    { when: "2019", title: "We met",       text: "Write a line or two about how you first met.",       photo: null },
+    { when: "2022", title: "First trip",   text: "A favourite memory, a trip or an inside joke.",      photo: null },
+    { when: "2026", title: "She said yes", text: "How the question was asked, and who cried first.",  photo: null },
   ],
 
-  /* ---------- 5. GALLERY ----------
+  /* ---------- 6. GALLERY ----------
      Upload photos to the "photos" folder, then list them here.
      Example: { src: "photos/1.jpg", caption: "Goa, 2023" },                    */
   gallery: [
@@ -112,7 +136,7 @@ window.WEDDING = {
     { src: null, caption: "Us" },
   ],
 
-  /* ---------- 6. VENUES (big cards with a map button) ---------- */
+  /* ---------- 7. VENUES ---------- */
   venues: [
     {
       label: "The Ceremony",
@@ -130,13 +154,13 @@ window.WEDDING = {
     },
   ],
 
-  /* ---------- 7. RSVP ---------- */
+  /* ---------- 8. RSVP ---------- */
   rsvp: {
     by: "Kindly reply by 6 January 2027",
     whatsapp: "919900000000",   // number that receives replies: country code + number, digits only
   },
 
-  /* ---------- 8. QUESTIONS ---------- */
+  /* ---------- 9. QUESTIONS ---------- */
   faq: [
     ["What should I wear?", "Each event has its own dress note above. For the church, shoulders covered is appreciated."],
     ["Can I bring a plus-one?", "Your invitation lists everyone we've saved a seat for. Message us if you're unsure."],
@@ -144,21 +168,52 @@ window.WEDDING = {
     ["Can I take photos?", "Please keep phones away during the ceremony. At the reception, snap away and use our hashtag!"],
   ],
 
-  /* ---------- 9. LOOK & FEEL ----------
-     Easiest way: turn on designPanel, click "Design" on the site, try things,
-     then press "Copy settings" and paste over this whole design: { ... } block. */
+  /* ---------- 10. SECTIONS: order, hide, rename ----------
+     order: the order sections appear on the page (and in the menu).
+     hide:  put a section name here to hide it, e.g. hide: ["story", "faq"],
+     titles: change the small line (eyebrow), the big title, and the menu word.  */
+  sections: {
+    order: ["couple", "events", "story", "gallery", "venues", "rsvp", "faq"],
+    hide:  [],
+    titles: {
+      couple:  { eyebrow: "Meet",         title: "The Bride & Groom",  nav: "Couple" },
+      events:  { eyebrow: "Join us for",  title: "The Celebrations",   nav: "Events" },
+      story:   { eyebrow: "How it began", title: "Our Story",          nav: "Our Story" },
+      gallery: { eyebrow: "Moments",      title: "Gallery",            nav: "Gallery" },
+      venues:  { eyebrow: "Where",        title: "Venues",             nav: "Venues" },
+      rsvp:    { eyebrow: "Kindly reply", title: "Will you join us?",  nav: "RSVP" },
+      faq:     { eyebrow: "Good to know", title: "Questions",          nav: "FAQ" },
+    },
+  },
+
+  /* ---------- 11. LOOK & FEEL ----------
+     Easiest way: keep designPanel: true, click "Design" on the site, try things,
+     then press "Copy settings" and paste over this whole design: { ... } block.
+
+     style:   "ocean" or "sakura"
+     theme:   ocean  → "golden", "dawn", "tropical", "dusk", "pearl"
+              sakura → "sakura", "ivory", "lavender", "peacock", "midnight"
+     intro:   ocean  → "sunrise", "tide", "none"
+              sakura → "envelope", "curtain", "none"
+     reveal:  "mixed", "up", "blur", "zoom", "slide", "flip", "none"
+     ambient: ocean  → "both", "sparkles", "birds", "none"
+              sakura → "petals", "petals-fireflies", "fireflies", "none"
+     amount:  how much background effect, 0 to 100
+     speed:   0.6 = faster, 1 = normal, 1.5 = slower                         */
   design: {
-    theme: "sakura",          // "sakura", "ivory", "lavender", "peacock", "midnight"
+    style: "ocean",
+    theme: "golden",
     fonts: {
-      script:  "Great Vibes",         // the fancy font for your names
+      script:  "Great Vibes",         // calligraphy for your names (40+ choices in the Design panel)
       heading: "Cormorant Garamond",  // section titles
       body:    "Mulish",              // normal text
-      // Any font from fonts.google.com works: copy its exact name here.
     },
-    intro: "envelope",        // "envelope" (tap the wax seal) or "none"
-    petals: 35,               // number of falling sakura petals, 0 to turn off
-    speed: 1,                 // animation speed: 0.6 = faster, 1 = normal, 1.5 = slower
-    music: null,              // e.g. "music/song.mp3" (upload the file first) or null for none
+    intro: "sunrise",
+    reveal: "mixed",
+    ambient: "both",
+    amount: 40,
+    speed: 1,
+    music: null,              // e.g. "music/song.mp3" (upload the file first) or null
     designPanel: true,        // true while testing, false before you share the site
   },
 };

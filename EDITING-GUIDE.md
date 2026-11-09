@@ -1,19 +1,27 @@
 # How to edit the wedding website
 
-You only ever edit **one file: `config.js`**. Every name, date, event, photo, font and colour on the site comes from there. Leave `index.html` alone.
+There are **two designs**, and both read the same settings file:
+
+| Design | File | Look |
+|---|---|---|
+| **Ocean sunrise** | `ocean.html` | Golden-hour sun rising over the sea, palms, seagulls, sparkles on the water |
+| **Sakura blossom** | `sakura.html` | Cherry blossoms, swaying leaves and jasmine, gold paisley dividers |
+
+You only ever edit **one file: `config.js`**. Names, dates, events, photos, the bride & groom section, fonts, colours and animations all come from there. Type something once and it shows in both designs.
+
+The main link (`…/RovinaWedsTejas/`) opens whichever design you pick with `style:` in `config.js`.
 
 ---
 
-## 1. Edit text on GitHub (no software needed)
+## 1. Edit on GitHub (no software needed)
 
 1. Open **github.com/tejasajoy/RovinaWedsTejas**.
-2. Click **`config.js`**.
-3. Click the **pencil icon** (top right of the file) to edit.
-4. Change what you need (see the map below).
-5. Click the green **Commit changes…** button, then **Commit changes** again.
-6. Wait **about 1 minute**, then refresh the website. If you don't see the change, press **Ctrl + Shift + R** (or **Cmd + Shift + R** on a Mac) to force-refresh.
+2. Click **`config.js`**, then the **pencil icon** (top right of the file).
+3. Make your change.
+4. Click **Commit changes…**, then **Commit changes** again.
+5. Wait about **1 minute** and refresh the site. If nothing changed, press **Ctrl + Shift + R** (or **Cmd + Shift + R** on a Mac).
 
-### The 3 rules that keep the site from breaking
+### The 3 rules that keep the site working
 
 | Rule | Right | Wrong |
 |---|---|---|
@@ -21,119 +29,132 @@ You only ever edit **one file: `config.js`**. Every name, date, event, photo, fo
 | Keep the comma at the end of the line | `city: "Bengaluru",` | `city: "Bengaluru"` |
 | A quote inside text needs a backslash | `"He said \"yes\""` | `"He said "yes""` |
 
-If the site ever shows a red box saying **"config.js could not be read"**, one of these rules was broken in the last line you changed. Open the file, check that line, and commit again. GitHub keeps every old version under **History**, so nothing is ever lost.
+If the site shows a red box saying **"config.js could not be read"**, one of these rules was broken in the last line you changed. GitHub keeps every old version: open `config.js` → **History** to see or copy an earlier one.
 
 ---
 
 ## 2. What's where in `config.js`
 
-| Section | What it controls |
-|---|---|
-| **1. names / parents / inviteLine / verse** | The top of the page: your names, parents' lines, invitation sentence and Bible verse. A few other verses are listed in the comments above it. |
-| **2. date** | `display` is the date as guests read it. `start` and `end` drive the countdown and the "Add to calendar" button. Keep the format `2027-02-06T10:30:00+05:30`. |
-| **3. events** | Each `{ … },` block is one event card. To **add** one, copy a whole block (from `{` to `},`) and paste it below. To **remove** one, delete its whole block. Their order on the page is the order here. |
-| **4. story** | The three photo cards in "Our Story". |
-| **5. gallery** | Photos in the gallery (see section 3 below). |
-| **6. venues** | The big church and reception cards with the Google Maps button. |
-| **7. rsvp** | `whatsapp` is the number that receives RSVPs: write it as `91` + 10-digit number, with no spaces or +. |
-| **8. faq** | Each line is `["Question?", "Answer."],` |
-| **9. design** | Theme, fonts, intro animation, petals, speed, music. See section 4. |
+| # | Section | What it controls |
+|---|---|---|
+| 1 | `names`, `parents`, `inviteLine`, `verse` | The top of the page. Other Bible verses are listed in the comments, including one about "many waters" that suits the Ocean design. |
+| 2 | `date`, `city`, `hashtag` | `display` is what guests read. `start`/`end` drive the countdown and "Add to calendar". Keep the format `2027-02-06T10:30:00+05:30`. |
+| 3 | `couple` | **The Bride & Groom section.** For each of you: full name, role line, photo, a few lines of "about", and little fact tags. `together` is the line between you (or `""` to hide it). |
+| 4 | `events` | Each `{ … },` block is one event card. Copy a block to add one; delete a block to remove it. |
+| 5 | `story` | The polaroid cards in "Our Story". |
+| 6 | `gallery` | The photo grid. |
+| 7 | `venues` | The church and reception cards with map buttons. |
+| 8 | `rsvp` | `whatsapp` is the number that receives replies: write `91` + 10 digits, with no spaces or +. |
+| 9 | `faq` | Each line is `["Question?", "Answer."],` |
+| 10 | `sections` | **Order, hide or rename sections** (see below). |
+| 11 | `design` | Design, colours, fonts, animations (see section 4). |
 
-**Event icons** you can use: `ring`, `church`, `glass`, `heart`, `dove`, `leaf`, `music`, `cake`.
+**Event icons:** `ring`, `church`, `glass`, `heart`, `dove`, `leaf`, `music`, `cake`, `sun`, `wave`.
 
-**Map buttons:** for `mapsQuery`, type exactly what you'd search on Google Maps, e.g. `"St. Mary's Basilica Shivajinagar Bengaluru"`. Write `""` to hide the button.
+### Reordering, hiding and renaming sections
+
+```js
+sections: {
+  order: ["couple", "events", "story", "gallery", "venues", "rsvp", "faq"],
+  hide:  ["faq"],               // hides the Questions section
+  titles: {
+    couple: { eyebrow: "Meet", title: "The Bride & Groom", nav: "Couple" },
+    ...
+  },
+},
+```
+
+- **Move a section:** move its name in `order`. The menu at the top follows the same order.
+- **Hide a section:** add its name to `hide`.
+- **Rename:** `eyebrow` is the small gold line, `title` is the big calligraphy title, `nav` is the word in the top menu.
 
 ---
 
 ## 3. Adding photos
 
-1. On the repository page, click **Add file → Upload files**.
-2. Drag your photos in. Before committing, the path at the top must say `photos/`. The easiest way is to first open the `photos` folder, then click **Add file → Upload files** from inside it.
-3. Use short names with no spaces: `1.jpg`, `proposal.jpg`, `goa-trip.jpg`.
-4. Commit.
-5. In `config.js`, point to them:
-   ```js
-   gallery: [
-     { src: "photos/1.jpg", caption: "Our first photo" },
-     { src: "photos/goa-trip.jpg", caption: "Goa, 2023" },
-   ],
-   ```
-   For story cards, use `photo: "photos/proposal.jpg"`.
+1. In the repository, open the **`photos`** folder.
+2. Click **Add file → Upload files**, drag your photos in, then **Commit changes**.
+3. Use short names with no spaces, e.g. `rovina.jpg`, `tejas.jpg`, `goa-trip.jpg`. Names are case-sensitive: `Photo.JPG` and `photo.jpg` are different files.
+4. Point to them in `config.js`:
+   - Bride & groom: `photo: "photos/rovina.jpg",`
+   - Story cards: `photo: "photos/proposal.jpg"`
+   - Gallery: `{ src: "photos/goa-trip.jpg", caption: "Goa, 2023" },`
 
-**Tip:** resize photos to about 1600px wide before uploading (any phone editor or squoosh.app does this for free). Big 8 MB phone photos make the site slow for guests.
-
-Names are **case-sensitive**: `Photo1.JPG` and `photo1.jpg` are different files.
+**Tip:** shrink photos to about 1600px wide first (free on squoosh.app). Large phone photos make the site slow for guests. Portrait (tall) photos look best in the bride & groom arches.
 
 ---
 
-## 4. Fonts, colours and animations
+## 4. Design, fonts, colours and animations
 
 ### The easy way: the Design panel
-While `designPanel: true`, a **Design** button appears at the bottom-left of the site.
+While `designPanel: true`, a **Design** button sits at the bottom-left of the site. Open it and you can:
 
-1. Click **Design**.
-2. Try the colour circles, the three font menus, the petals slider, the speed slider and the opening animation. Changes show instantly.
-3. Click **Copy settings**.
-4. In `config.js`, select the whole `design: { … },` block and paste over it. Commit.
+- **Switch design:** Sakura blossom or Ocean sunrise
+- **Pick colours:** 5 themes per design
+- **Pick calligraphy for your names:** 40+ fonts, each shown with your names. Type in the filter box to search, or type any Google Font name.
+- **Change other fonts:** headings and normal text
+- **Choose the opening animation**
+- **Choose how sections appear as you scroll**
+- **Choose a background effect** and how much of it
+- **Change animation speed**
+- **Replay opening** to see your choice again
 
-Your choices only stick once you paste them into `config.js` and commit. Refreshing the page goes back to what's in the file.
+When you like it, press **Copy settings**, then in `config.js` select the whole `design: { … },` block and paste over it. Commit.
 
-### Doing it by hand
+Changes in the panel are only a preview. They stay only once you paste them into `config.js` and commit.
 
-```js
-design: {
-  theme: "sakura",          // sakura, ivory, lavender, peacock, midnight
-  fonts: {
-    script:  "Great Vibes",         // your names and section titles
-    heading: "Cormorant Garamond",  // headings
-    body:    "Mulish",              // normal text
-  },
-  intro: "envelope",        // "envelope" or "none"
-  petals: 35,               // 0 = no falling petals, 80 = lots
-  speed: 1,                 // 0.6 faster, 1 normal, 1.5 slower
-  music: null,
-  designPanel: true,
-},
-```
+### All the options
 
-**Any Google font works.** Go to fonts.google.com, pick a font, and copy its name exactly as shown (e.g. `"Cinzel Decorative"`, `"Playfair Display"`).
-
-Good pairings to try:
-
-| Names (script) | Headings | Text |
+| Setting | Ocean | Sakura |
 |---|---|---|
-| Great Vibes | Cormorant Garamond | Mulish |
-| Pinyon Script | Cinzel | Lato |
-| Parisienne | Playfair Display | Nunito |
-| Alex Brush | Marcellus | Josefin Sans |
-| Allura | Prata | Raleway |
+| `theme` | `golden`, `dawn`, `tropical`, `dusk`, `pearl` | `sakura`, `ivory`, `lavender`, `peacock`, `midnight` |
+| `intro` (opening) | `sunrise` (sun rises from the sea), `tide` (a wave washes away), `none` | `envelope` (wax seal), `curtain` (silk curtains part), `none` |
+| `ambient` (background) | `both`, `sparkles`, `birds`, `none` | `petals`, `petals-fireflies`, `fireflies`, `none` |
+| `reveal` (scroll) | `mixed`, `up`, `blur`, `zoom`, `slide`, `flip`, `none` | same |
+| `amount` | 0 (off) to 100 (lots) | same |
+| `speed` | 0.6 faster · 1 normal · 1.5 slower | same |
+
+**Fonts:** any font on fonts.google.com works. Copy its name exactly, e.g. `script: "Pinyon Script",`.
+
+Pairings to try:
+
+| Names | Headings | Text | Feel |
+|---|---|---|---|
+| Great Vibes | Cormorant Garamond | Mulish | Classic |
+| Pinyon Script | Cinzel | Lato | Formal, church-like |
+| Island Moments | Playfair Display | Nunito | Beachy (Ocean) |
+| The Nautigal | Marcellus | Jost | Breezy (Ocean) |
+| Mrs Saint Delafield | Prata | Raleway | Elegant |
+| Corinthia | Gilda Display | Karla | Romantic |
+| Allura | Rozha One | Poppins | Indian festive |
 
 ### Background music (optional)
-1. Upload an `.mp3` into a folder called `music` (same steps as photos).
-2. Set `music: "music/your-song.mp3",`.
-3. A small music button appears at the bottom-right. Browsers don't allow music to play until the guest taps it, so it never starts on its own.
-
-Use a song you have the rights to. Instrumental versions work best.
+Upload an `.mp3` into a folder called `music`, then set `music: "music/your-song.mp3",`. A music button appears at the bottom-right. Browsers only play music after the guest taps that button.
 
 ---
 
 ## 5. Before you share the link
 
-- [ ] All names, dates, times and venues checked
-- [ ] Parents' lines filled in (or set to `""` to hide)
+- [ ] Names, dates, times and venues checked
+- [ ] Parents' lines filled in (or `""` to hide)
+- [ ] Bride & groom text and photos added
 - [ ] WhatsApp number is yours, and a test RSVP reached you
 - [ ] Every `mapsQuery` opens the right place
 - [ ] Placeholder events you aren't having are deleted
-- [ ] `designPanel: false` so guests don't see the Design button
-- [ ] Opened on your phone as well as a laptop
+- [ ] `style` set to the design you want guests to see
+- [ ] `designPanel: false`, so guests don't see the Design button
+- [ ] Checked on a phone as well as a laptop
 
 ---
 
-## 6. Where the site lives
+## 6. Links
 
-- **Website:** https://tejasajoy.github.io/RovinaWedsTejas/
-- **Files:** https://github.com/tejasajoy/RovinaWedsTejas
-- **Backup:** on the repository page, click **Code → Download ZIP** once in a while and keep it in Google Drive.
+- **Website:** https://tejasajoy.github.io/RovinaWedsTejas/ (opens your chosen design)
+- **Ocean directly:** …/RovinaWedsTejas/ocean.html
+- **Sakura directly:** …/RovinaWedsTejas/sakura.html
+- **Backup:** **Code → Download ZIP** now and then, and keep it in Google Drive.
 
-**Turning on hosting** (only needed once, if the website link doesn't work yet):
-**Settings → Pages →** under "Branch" choose **main** and **/ (root)** → **Save**. After 1–2 minutes the link at the top of that page goes live.
+**If the website link doesn't work yet:** go to **Settings → Pages**, under "Branch" choose **main** and **/ (root)**, then **Save**. Wait 1–2 minutes.
+
+### Files you can ignore
+`index.html` (just opens your chosen design), `ocean.html`, `sakura.html` and `shared.js` hold the designs and animations. You don't need to touch them.
