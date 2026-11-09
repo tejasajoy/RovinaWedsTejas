@@ -79,7 +79,7 @@ window.WEDDING = {
   events: [
     {
       name: "Engagement",
-      date: "Sat, 10 October 2026",
+      date: "Friday, 9 October 2026",
       time: "7:00 PM",
       venue: "Hubli",
       mapsQuery: "",                       // what you'd type in Google Maps, or "" to hide the button
