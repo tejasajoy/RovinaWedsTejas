@@ -50,7 +50,7 @@ If the site shows a red box saying **"config.js could not be read"**, one of the
 | 11 | `sections` | **Order, hide or rename sections** (see below). |
 | 12 | `design` | Design, colours, fonts, animations (see section 4). |
 
-**Event icons:** `ring`, `church`, `glass`, `heart`, `dove`, `leaf`, `music`, `cake`, `sun`, `wave`.
+**Event icons:** `ring`, `church`, `glass`, `heart`, `dove`, `leaf`, `music`, `cake`, `sun`, `wave`, `dance` (Sangeet), `dhol` (drum), `diya` (oil lamp). Set one with the `icon:` line inside each event. The drawings themselves live in `shared.js`, so ask Claude if you'd like a new one.
 
 ### Reordering, hiding and renaming sections
 

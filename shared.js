@@ -41,6 +41,9 @@ const ICONS = {
   cake:'<path d="M4 21V12h16v9M2 21h20M4 16c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 4 0M12 12V8M12 5a1 1 0 0 1 0-2"/>',
   sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',
   wave:'<path d="M2 12c3-3 5-3 8 0s5 3 8 0 3-2 4-2M2 18c3-3 5-3 8 0s5 3 8 0 3-2 4-2"/>',
+  dance:'<circle cx="13.5" cy="3.5" r="2"/><path d="M13 6.5l-1.5 6.5M12.4 8.6l4.6-2.6 2-3.5M12.4 8.6L7 11l-2.5-1.5M11.5 13l3.5 3.5-.5 5M11.5 13l-4 3.5-3 .5M8.5 15.5c1.5 1.8 4.5 1.8 6 0"/>',
+  dhol:'<ellipse cx="12" cy="8" rx="7" ry="3"/><path d="M5 8v8c0 1.7 3.1 3 7 3s7-1.3 7-3V8M5 12c2 1.2 4.5 1.8 7 1.8s5-.6 7-1.8M15 5l5-4M9 5L4 1"/>',
+  diya:'<path d="M3 14h18c-1 4-4.5 6-9 6s-8-2-9-6z"/><path d="M12 11c-2.2-2-1.6-5 0-8 1.6 3 2.2 6 0 8z"/><path d="M9 20l-1 2h8l-1-2"/>',
 };
 const DEFAULT_TITLES = {
   couple:  { eyebrow:"Meet",          title:"The Bride & Groom",   nav:"Couple" },

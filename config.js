@@ -68,7 +68,8 @@ window.WEDDING = {
    
   /* ---------- 4. EVENTS ----------
      Add, remove or reorder freely. Copy a whole { ... }, block to add one.
-     icon: "ring", "church", "glass", "heart", "dove", "leaf", "music", "cake", "sun", "wave"
+     icon: "ring", "church", "glass", "heart", "dove", "leaf", "music", "cake", "sun", "wave",
+           "dance" (Sangeet), "dhol" (drum), "diya" (oil lamp)
      color: the little dress-code dot (any colour code).                                   */
   events: [
     {
@@ -92,6 +93,17 @@ window.WEDDING = {
       color: "#f3cf55",
       icon: "leaf",
       note: "Delete this event if you are not having it",
+    },
+    {
+      name: "Sangeet",
+      date: "Fri, 5 February 2027",
+      time: "7:00 PM",
+      venue: "Venue name",
+      mapsQuery: "",
+      dress: "Glam & sparkle",
+      color: "#b48cf2",
+      icon: "dance",
+      note: "Music, dance performances and dinner",
     },
     {
       name: "Holy Matrimony",
