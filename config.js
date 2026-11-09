@@ -13,16 +13,16 @@
 
 window.WEDDING = {
 
-  /* ---------- 1. THE COUPLE (top of the page) ---------- */
+ /* ---------- 1. THE COUPLE (top of the page) ---------- */
   names: {
-    first:  "Rovina",
-    second: "Tejas",
+    first:  "Rovina B",
+    second: "Tejas A",
   },
   parents: {
-    first:  "Daughter of Mr. & Mrs. ________",   // or "" to hide
-    second: "Son of Mr. & Mrs. ________",        // or "" to hide
+    first:  "Daughter of Mr. Prakasham Bedre & Mrs Lalitha Bedre",   // or "" to hide
+    second: "Son of Mr. Anand R & & Mrs. Pushpaltha J",        // or "" to hide
   },
-  inviteLine: "By the grace of God and together with their families, request the honour of your presence at their marriage",
+  inviteLine: "By the grace of Our Lord Christ and together with their families, request the honour of your presence at their marriage",
 
   /* Bible verse under the names. Some alternatives:
      "Two are better than one... a threefold cord is not quickly broken." — Ecclesiastes 4:9-12
@@ -30,18 +30,18 @@ window.WEDDING = {
      "Whither thou goest, I will go; and where thou lodgest, I will lodge." — Ruth 1:16
      "Many waters cannot quench love, neither can the floods drown it." — Song of Solomon 8:7  (lovely with the Ocean design) */
   verse: {
-    text: "Therefore what God hath joined together, let not man put asunder.",
+    text: "Therefore what God has joined together, let no man separate.",
     ref:  "Mark 10:9",
   },
 
   /* ---------- 2. THE BIG DAY ---------- */
   date: {
-    display: "Saturday, 6 February 2027",       // shown on the page, write it any way you like
-    start:   "2027-02-06T10:30:00+05:30",       // countdown + calendar. Format: YYYY-MM-DDTHH:MM:00+05:30
-    end:     "2027-02-06T22:00:00+05:30",
+    display: "|Friday | 5 February 2027 |",       // shown on the page, write it any way you like
+    start:   "2027-02-05T14:00:00+05:30",       // countdown + calendar. Format: YYYY-MM-DDTHH:MM:00+05:30
+    end:     "2027-02-05T23:00:00+05:30",
   },
-  city:    "Bengaluru, Karnataka",
-  hashtag: "#RovinaWedsTejas",
+  city:    "Hubli, Karnataka",
+  hashtag: "#Rovina∞Tejas",
 
   /* ---------- 3. BRIDE & GROOM SECTION ----------
      photo: upload to the "photos" folder and write e.g. "photos/rovina.jpg", or null.
@@ -49,7 +49,7 @@ window.WEDDING = {
   couple: {
     bride: {
       name:     "Rovina",
-      fullName: "Rovina ________",
+      fullName: "Rovina B",
       role:     "The Bride",
       photo:    null,
       about:    "A few lines about the bride: where she grew up, what she does, what makes her laugh and what she loves most about Tejas.",
@@ -57,15 +57,15 @@ window.WEDDING = {
     },
     groom: {
       name:     "Tejas",
-      fullName: "Tejas ________",
+      fullName: "Tejas A",
       role:     "The Groom",
       photo:    null,
-      about:    "A few lines about the groom: his hometown, his work, his hobbies and the moment he knew Rovina was the one.",
-      facts:    ["Cricket or football?", "Best cook at home", "Always late"],
+      about:    "A few lines about the groom: Born & raised in Bangalore, works for Aerospace, his hobbies and the moment he knew Rovina was the one.",
+      facts:    ["F1, MotoGP", "Best cook at home", "Always early"],
     },
     together: "Two hearts, one faith, one journey",   // line between the two, or "" to hide
   },
-
+   
   /* ---------- 4. EVENTS ----------
      Add, remove or reorder freely. Copy a whole { ... }, block to add one.
      icon: "ring", "church", "glass", "heart", "dove", "leaf", "music", "cake", "sun", "wave"
