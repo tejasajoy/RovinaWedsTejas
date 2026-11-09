@@ -21,7 +21,7 @@ window.WEDDING = {
   parents: {
     first:  "Daughter of Mr. Prakasham Bedre & Mrs Lalitha Bedre",  // or "" to hide
      
-    second: "Son of Mr. Anand R & & Mrs. Pushpaltha J",        // or "" to hide
+    second: "Son of Mr. Anand R & Mrs. Pushpaltha J",        // or "" to hide
   },
   inviteLine: "By the grace of Our Lord Christ and together with their families, request the honour of your presence at their marriage",
 
@@ -52,7 +52,7 @@ window.WEDDING = {
       name:     "Rovina",
       fullName: "Rovina B",
       role:     "The Bride",
-      photo:    null,
+      photo:    "photos/UI/bride.jpg",     // e.g. a bridal veil; shows a placeholder until the file is uploaded
       about:    "Coffee, food and Vision. She never said what she loves most about Tejas.",
       facts:    ["Coffee or chai?", "Favourite place", "Hidden talent"],
     },
@@ -60,33 +60,39 @@ window.WEDDING = {
       name:     "Tejas",
       fullName: "Tejas A",
       role:     "The Groom",
-      photo:    null,
+      photo:    "photos/UI/groom.jpg",     // e.g. a blazer; shows a placeholder until the file is uploaded
       about:    "Born & raised in Bangalore. Aerospace. The moment I knew Rovina was the one, Fairfield !",
       facts:    ["F1, MotoGP", "Best cook at home", "Always early"],
     },
     together: "Two hearts, one faith, one journey",   // line between the two, or "" to hide
+    frame:    "rounded",   // photo shape: "rounded", "oval", "circle" or "arch"
   },
    
   /* ---------- 4. EVENTS ----------
      Add, remove or reorder freely. Copy a whole { ... }, block to add one.
      icon: "ring", "church", "glass", "heart", "dove", "leaf", "music", "cake", "sun", "wave",
            "dance" (Sangeet), "dhol" (drum), "diya" (oil lamp)
-     color: the little dress-code dot (any colour code).                                   */
+     color: the little dress-code dot (any colour code).
+     done: true      → event already happened ("Celebrated" badge, not in the RSVP)
+     photos: [...]   → little photos on the card that open a slideshow
+     mapsQuery       → the venue name becomes a link to Google Maps                                   */
   events: [
     {
       name: "Engagement",
-      date: "Sat, 10 October 2027",
+      date: "Sat, 10 October 2026",
       time: "7:00 PM",
       venue: "Hubli",
       mapsQuery: "",                       // what you'd type in Google Maps, or "" to hide the button
       dress: "Pastels",
       color: "#f6b8c8",
       icon: "ring",
-      note: "Ring ceremony followed by dinner",
+      note: "Thank you to everyone who celebrated with us!",
+      done: true,                          // already happened: shows a "Celebrated" badge and leaves it out of the RSVP
+      photos: [],                          // e.g. ["photos/engagement/1.jpg", "photos/engagement/2.jpg"] – tap a photo to open the slideshow
     },
     {
       name: "Sangeeth",
-      date: "Wed, 5 February 2027",
+      date: "Wed, 3 February 2027",
       time: "7:00 PM",
       venue: "Family home",
       mapsQuery: "",
@@ -110,7 +116,7 @@ window.WEDDING = {
       name: "Reception",
       date: "Friday, 5 February 2027",
       time: "7:00 PM",
-      venue: "Reception venue",
+      venue: "The Grand Lawns",
       mapsQuery: "The Grand Lawns Hubli",
       dress: "Evening wear",
       color: "#c84a74",

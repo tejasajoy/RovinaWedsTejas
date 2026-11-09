@@ -87,6 +87,9 @@ a.chip:hover{background:var(--accent);color:var(--accent-ink,#fff)}
 .person{text-align:center;display:grid;justify-items:center;gap:6px}
 .portrait{width:min(300px,78vw);aspect-ratio:4/5;position:relative;border-radius:999px 999px 24px 24px;overflow:hidden;box-shadow:0 22px 50px color-mix(in srgb,var(--accent) 18%,transparent);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
 .portrait::after{content:"";position:absolute;inset:10px;border-radius:999px 999px 18px 18px;border:1.5px solid rgba(255,255,255,.75);pointer-events:none}
+.portrait.rounded{border-radius:28px}.portrait.rounded::after{border-radius:20px}
+.portrait.oval{border-radius:50%}.portrait.oval::after{border-radius:50%}
+.portrait.circle{aspect-ratio:1;border-radius:50%}.portrait.circle::after{border-radius:50%}
 .person:hover .portrait{transform:translateY(-8px) rotate(-1deg)}
 .portrait img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
 .person:hover .portrait img{transform:scale(1.06)}
@@ -129,6 +132,21 @@ a.chip:hover{background:var(--accent);color:var(--accent-ink,#fff)}
   .ev .card,.ev:nth-of-type(odd) .card{grid-column:2;text-align:left}
   .ev .card .chips{justify-content:flex-start}
 }
+
+.maplink{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--muted);border-bottom:1px dashed color-mix(in srgb,var(--accent) 45%,transparent);transition:color .25s,border-color .25s}
+.maplink svg{width:14px;height:14px;flex:none;stroke:var(--accent)}
+.maplink:hover{color:var(--accent);border-bottom-color:var(--accent)}
+.badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:var(--gold);color:#fff;margin-left:8px;vertical-align:middle}
+.ev.done .node{background:var(--accent)}
+.ev.done .node svg{stroke:#fff!important}
+.thumbs{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.ev .card .thumbs{justify-content:flex-end}
+.ev:nth-of-type(odd) .card .thumbs{justify-content:flex-start}
+.thumbs button{position:relative;width:64px;height:64px;border-radius:12px;overflow:hidden;border:0;padding:0;cursor:zoom-in;background:var(--soft);transition:transform .35s cubic-bezier(.3,1.4,.5,1),box-shadow .35s}
+.thumbs button:hover{transform:translateY(-4px) rotate(-2deg);box-shadow:0 10px 20px color-mix(in srgb,var(--accent) 25%,transparent)}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.thumbs .more{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.45);color:#fff;font-weight:700;font-size:15px}
+@media (max-width:760px){.ev .card .thumbs{justify-content:flex-start}}
 
 /* story */
 .story{display:flex;justify-content:center;gap:34px;flex-wrap:wrap;margin-top:50px}
@@ -400,7 +418,7 @@ W.init = function(site){
   if (C.couple && $("#coupleGrid")) {
     const p = (x, side, i) => !x ? "" : `
       <article class="person" data-anim="${side}">
-        <div class="portrait">${x.photo ? `<img src="${esc(x.photo)}" alt="${esc(x.fullName || x.name)}" loading="lazy">` : ph((x.name || "?")[0], i, true)}</div>
+        <div class="portrait ${esc(["arch","rounded","oval","circle"].includes(C.couple.frame) ? C.couple.frame : "rounded")}" data-ph="${esc((x.name || "?")[0])}" data-i="${i}">${x.photo ? `<img src="${esc(x.photo)}" alt="${esc(x.fullName || x.name)}" loading="lazy">` : ph((x.name || "?")[0], i, true)}</div>
         <p class="role">${esc(x.role)}</p>
         <h3 class="pname">${esc(x.fullName || x.name)}</h3>
         <p class="about">${esc(x.about)}</p>
@@ -411,20 +429,32 @@ W.init = function(site){
       ${p(C.couple.groom, "right", 1)}</div>`;
   }
 
+  // a photo that isn't uploaded yet falls back to the pretty placeholder
+  $$(".portrait img").forEach(img => img.addEventListener("error", () => { const p = img.parentElement; img.outerHTML = ph(p.dataset.ph, +p.dataset.i, true); }));
+
   /* ---- events ---- */
   const maps = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+  const PIN = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
+  const photoSets = [];
+  const thumbs = (list, label) => {
+    if (!list || !list.length) return "";
+    const set = photoSets.push(list.map((p, k) => typeof p === "string" ? { src:p, caption:`${label} · ${k + 1} of ${list.length}` } : p)) - 1;
+    const max = 4;
+    return `<div class="thumbs">${list.slice(0, max).map((p, k) => `<button type="button" data-set="${set}" data-i="${k}" aria-label="Open ${esc(label)} photo ${k + 1}"><img src="${esc(typeof p === "string" ? p : p.src)}" alt="" loading="lazy">${k === max - 1 && list.length > max ? `<span class="more">+${list.length - max + 1}</span>` : ""}</button>`).join("")}</div>`;
+  };
   if ($("#timeline")) $("#timeline").insertAdjacentHTML("beforeend", (C.events || []).map((e, i) => `
-    <div class="ev" data-anim="${i % 2 ? "left" : "right"}">
+    <div class="ev${e.done ? " done" : ""}" data-anim="${i % 2 ? "left" : "right"}">
       <div class="node"><svg viewBox="0 0 24 24" fill="none" style="stroke:var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${ICONS[e.icon] || ICONS.heart}</svg></div>
       <div class="card">
         <p class="when">${esc(e.date)}${e.time ? " · " + esc(e.time) : ""}</p>
-        <h3>${esc(e.name)}</h3>
-        <p class="where">${esc(e.venue)}</p>
+        <h3>${esc(e.name)}${e.done ? `<span class="badge">${esc(e.doneLabel || "Celebrated")}</span>` : ""}</h3>
+        <p class="where">${e.mapsQuery ? `<a class="maplink" href="${maps(e.mapsQuery)}" target="_blank" rel="noopener" title="Open in Google Maps">${PIN}${esc(e.venue)}</a>` : esc(e.venue)}</p>
         ${e.note ? `<p class="note">${esc(e.note)}</p>` : ""}
         <div class="chips">
           ${e.dress ? `<span class="chip"><span class="dot" style="background:${esc(e.color || "#fff")}"></span>${esc(e.dress)}</span>` : ""}
-          ${e.mapsQuery ? `<a class="chip" href="${maps(e.mapsQuery)}" target="_blank" rel="noopener">Directions</a>` : ""}
+          ${e.mapsQuery && !e.done ? `<a class="chip" href="${maps(e.mapsQuery)}" target="_blank" rel="noopener">Directions</a>` : ""}
         </div>
+        ${thumbs(e.photos, e.name)}
       </div>
     </div>`).join(""));
 
@@ -437,17 +467,20 @@ W.init = function(site){
 
   /* ---- gallery + lightbox ---- */
   const G = C.gallery || [];
-  if ($("#galleryGrid")) {
-    $("#galleryGrid").innerHTML = G.map((g, i) => `<button type="button" data-i="${i}" data-anim="zoom" aria-label="Open photo: ${esc(g.caption)}">${g.src ? `<img src="${esc(g.src)}" alt="${esc(g.caption)}" loading="lazy">` : ph(g.caption, i)}<span class="cap">${esc(g.caption)}</span></button>`).join("");
+  {
+    if ($("#galleryGrid")) $("#galleryGrid").innerHTML = G.map((g, i) => `<button type="button" data-i="${i}" data-anim="zoom" aria-label="Open photo: ${esc(g.caption)}">${g.src ? `<img src="${esc(g.src)}" alt="${esc(g.caption)}" loading="lazy">` : ph(g.caption, i)}<span class="cap">${esc(g.caption)}</span></button>`).join("");
     document.body.insertAdjacentHTML("beforeend", `<div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer"><div class="frame" id="lbFrame"></div><button class="lbbtn prev" id="lbPrev" type="button" aria-label="Previous photo">&#8249;</button><button class="lbbtn next" id="lbNext" type="button" aria-label="Next photo">&#8250;</button><button class="lbbtn close" id="lbClose" type="button" aria-label="Close">&#10005;</button></div>`);
-    let cur = 0; const lb = $("#lb");
+    let cur = 0, L = G; const lb = $("#lb");
     const show = (i, dir) => {
-      cur = (i + G.length) % G.length; const g = G[cur], f = $("#lbFrame");
+      cur = (i + L.length) % L.length; const g = L[cur], f = $("#lbFrame");
       f.innerHTML = (g.src ? `<img src="${esc(g.src)}" alt="${esc(g.caption)}">` : ph(g.caption, cur)) + `<p class="lbcap">${esc(g.caption)}</p>`;
       if (dir) { f.style.setProperty("--dir", dir > 0 ? "60px" : "-60px"); f.classList.remove("swap"); void f.offsetWidth; f.classList.add("swap"); }
       lb.classList.add("show");
     };
-    $("#galleryGrid").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { show(+b.dataset.i); $("#lbClose").focus(); } });
+    $$(".thumbs img").forEach(img => img.addEventListener("error", () => img.closest("button").remove()));
+    $("#galleryGrid")?.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { L = G; show(+b.dataset.i); $("#lbClose").focus(); } });
+    $("#timeline")?.addEventListener("click", e => { const b = e.target.closest(".thumbs button"); if (b) { L = photoSets[+b.dataset.set]; show(+b.dataset.i); $("#lbClose").focus(); } });
+    W.openPhotos = (list, i = 0) => { L = list; show(i); };
     $("#lbPrev").onclick = () => show(cur - 1, -1); $("#lbNext").onclick = () => show(cur + 1, 1);
     $("#lbClose").onclick = () => lb.classList.remove("show");
     lb.addEventListener("click", e => { if (e.target === lb) lb.classList.remove("show"); });
@@ -465,7 +498,7 @@ W.init = function(site){
     <article class="venue" data-anim="${i % 2 ? "right" : "left"}">
       <div class="art">${site.venueArt ? site.venueArt(i, v) : ""}</div>
       <div class="body">
-        <p class="eyebrow">${esc(v.label)}</p><h3>${esc(v.name)}</h3><p class="where">${esc(v.address)}</p>
+        <p class="eyebrow">${esc(v.label)}</p><h3>${v.mapsQuery ? `<a href="${maps(v.mapsQuery)}" target="_blank" rel="noopener" style="color:inherit;text-decoration:none" title="Open in Google Maps">${esc(v.name)}</a>` : esc(v.name)}</h3><p class="where">${v.mapsQuery ? `<a class="maplink" href="${maps(v.mapsQuery)}" target="_blank" rel="noopener">${PIN}${esc(v.address)}</a>` : esc(v.address)}</p>
         ${v.tips?.length ? `<ul>${v.tips.map(t => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
         ${v.mapsQuery ? `<div><a class="btn solid" href="${maps(v.mapsQuery)}" target="_blank" rel="noopener">Open in Google Maps</a></div>` : ""}
       </div>
@@ -490,7 +523,7 @@ W.init = function(site){
           <div class="field"><input id="fName" placeholder=" " autocomplete="name"><label for="fName">Your name</label></div>
           <div class="field"><select id="fCount"><option>1</option><option>2</option><option>3</option><option>4</option><option>5 or more</option></select><label for="fCount">Number of guests</label></div>
         </div>
-        <fieldset id="evField"><legend>Which events will you attend?</legend><div class="evchecks">${(C.events || []).map((e, i) => `<label for="evc${i}"><input type="checkbox" id="evc${i}" value="${esc(e.name)}" checked><span>${esc(e.name)}</span></label>`).join("")}</div></fieldset>
+        <fieldset id="evField"><legend>Which events will you attend?</legend><div class="evchecks">${(C.events || []).map((e, i) => e.done ? "" : `<label for="evc${i}"><input type="checkbox" id="evc${i}" value="${esc(e.name)}" checked><span>${esc(e.name)}</span></label>`).join("")}</div></fieldset>
         <div class="field"><textarea id="fMsg" rows="3" placeholder=" "></textarea><label for="fMsg">A blessing or note for us (optional)</label></div>
         <p id="formErr" style="color:var(--accent);display:none;margin:0">Please write your name so we know who's coming.</p>
         <div style="text-align:center"><button class="btn solid" type="submit">Send RSVP</button></div>

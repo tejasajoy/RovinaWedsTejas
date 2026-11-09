@@ -82,6 +82,16 @@ sections: {
    - Story cards: `photo: "photos/proposal.jpg"`
    - Gallery: `{ src: "photos/goa-trip.jpg", caption: "Goa, 2023" },`
 
+**Ready-made spots (no config editing needed):**
+- `photos/UI/bride.jpg` and `photos/UI/groom.jpg`: the Bride & Groom pictures (e.g. a veil and a blazer). Upload with exactly these names and they appear. Until then, a placeholder shows.
+- `photos/engagement/`: engagement pictures. List them under the Engagement event as `photos: ["photos/engagement/1.jpg", ...]` (or ask Claude), and small photos appear on that card that open a slideshow.
+
+**Photo frame shape:** `couple.frame` can be `"rounded"`, `"oval"`, `"circle"` or `"arch"`.
+
+**Past events:** add `done: true` to an event and it gets a "Celebrated" badge and drops out of the RSVP list. Any event can have `photos: [...]`.
+
+**Maps:** if an event or venue has a `mapsQuery`, guests can tap the venue name to open it in Google Maps.
+
 **Tip:** shrink photos to about 1600px wide first (free on squoosh.app). Large phone photos make the site slow for guests. Portrait (tall) photos look best in the bride & groom arches.
 
 ---
