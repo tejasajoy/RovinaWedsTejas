@@ -120,9 +120,9 @@ footer.closing.has-video .tag{font-size:clamp(54px,9vw,96px)}
 .cross{width:34px;height:48px;margin:0 auto 14px;filter:drop-shadow(0 0 12px color-mix(in srgb,var(--gold) 60%,transparent));animation:glow calc(3s*var(--speed)) ease-in-out infinite}
 @keyframes glow{50%{filter:drop-shadow(0 0 22px color-mix(in srgb,var(--gold) 90%,transparent))}}
 .invite{color:var(--muted);max-width:46ch;margin:0 auto;font-family:var(--f-head);font-size:20px;font-style:italic}
-.names{font-family:var(--f-script);font-weight:400;color:var(--accent);font-size:clamp(70px,14vw,150px);line-height:1.1;margin:18px 0 4px}
+.names{font-family:var(--f-script);font-weight:400;color:var(--name-color,var(--accent));font-size:clamp(70px,14vw,150px);line-height:1.1;margin:18px 0 4px}
 .names .ch{display:inline-block;animation:inkIn calc(1.1s*var(--speed)) cubic-bezier(.2,.8,.2,1) both;animation-delay:calc((var(--i) * 70ms + 400ms) * var(--speed))}
-.names .amp{font-size:.55em;color:var(--gold);padding:0 .15em;vertical-align:.25em}
+.names .amp{font-size:.55em;color:var(--amp-color,var(--gold));padding:0 .15em;vertical-align:.25em}
 @keyframes inkIn{from{opacity:0;filter:blur(12px);transform:translateY(30px) scale(1.2)}}
 .parents{display:flex;justify-content:center;gap:6px 40px;flex-wrap:wrap;color:var(--muted);font-size:14px;margin-bottom:22px}
 .date-line{font-family:var(--f-head);font-size:clamp(22px,3vw,28px);letter-spacing:.08em}

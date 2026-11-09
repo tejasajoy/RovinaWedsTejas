@@ -166,6 +166,8 @@ Changes in the panel are only a preview. They stay only once you paste them into
 | `amount` | 0 (off) to 100 (lots) | same |
 | `speed` | 0.6 faster · 1 normal · 1.5 slower | same |
 
+**Name colour:** `nameColor` sets the colour of "Rovina" and "Tejas" (in the hero and the Bride & Groom section), and `ampColor` sets the "&" between them. Use a colour code, e.g. `"#ffffff"` white, `"#d4af37"` gold, `"#f6b8c8"` blush pink, `"#c8603f"` terracotta. Leave as `""` to follow the theme. The Design panel has colour pickers for both.
+
 **Fonts:** any font on fonts.google.com works. Copy its name exactly, e.g. `script: "Pinyon Script",`.
 
 Pairings to try:

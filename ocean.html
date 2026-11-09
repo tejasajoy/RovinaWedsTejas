@@ -83,9 +83,9 @@ nav.solid .links a::after{background:var(--accent)}
 .hcontent{position:relative}
 .cross{width:28px;height:40px;margin:0 auto 14px;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--sun) 80%,transparent))}
 .invite{max-width:46ch;margin:0 auto;font-family:var(--f-head);font-size:20px;font-style:italic;text-shadow:0 1px 14px rgba(0,0,0,.35)}
-.names{font-family:var(--f-script);font-weight:400;font-size:clamp(70px,14vw,156px);line-height:1.1;margin:12px 0 2px;text-shadow:0 4px 34px rgba(0,0,0,.35)}
+.names{font-family:var(--f-script);font-weight:400;font-size:clamp(70px,14vw,156px);line-height:1.1;margin:12px 0 2px;color:var(--name-color,#fff);text-shadow:0 4px 34px rgba(0,0,0,.35)}
 .names .ch{display:inline-block;animation:rise calc(1.3s*var(--speed)) cubic-bezier(.2,.8,.2,1) both;animation-delay:calc((var(--i) * 65ms + 500ms) * var(--speed))}
-.names .amp{font-size:.55em;color:var(--sun);padding:0 .15em;vertical-align:.25em}
+.names .amp{font-size:.55em;color:var(--amp-color,var(--sun));padding:0 .15em;vertical-align:.25em}
 @keyframes rise{from{opacity:0;transform:translateY(50px);filter:blur(10px)}}
 .parents{display:flex;justify-content:center;gap:6px 40px;flex-wrap:wrap;font-size:14px;margin-bottom:18px;opacity:.92;text-shadow:0 1px 10px rgba(0,0,0,.4)}
 .date-line{font-family:var(--f-head);font-size:clamp(22px,3vw,28px);letter-spacing:.08em;text-shadow:0 1px 12px rgba(0,0,0,.4)}

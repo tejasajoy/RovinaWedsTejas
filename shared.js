@@ -94,7 +94,7 @@ a.chip:hover{background:var(--accent);color:var(--accent-ink,#fff)}
 .portrait img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.2s cubic-bezier(.2,.8,.2,1)}
 .person:hover .portrait img{transform:scale(1.06)}
 .role{margin-top:16px;font-size:12.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);font-weight:700}
-.pname{font-family:var(--f-script)!important;font-weight:400!important;font-size:clamp(44px,6vw,62px)!important;color:var(--accent);line-height:1.1}
+.pname{font-family:var(--f-script)!important;font-weight:400!important;font-size:clamp(44px,6vw,62px)!important;color:var(--name-color,var(--accent));line-height:1.1}
 .about{color:var(--muted);max-width:40ch}
 .person .chips{justify-content:center}
 .couple-mid{align-self:center;display:grid;justify-items:center;gap:12px;padding-top:40px;max-width:200px;text-align:center}
@@ -317,7 +317,7 @@ W.init = function(site){
   document.documentElement.classList.add("js");
   const st = document.createElement("style"); st.textContent = CSS; document.head.insertBefore(st, document.head.querySelector("style"));
 
-  const D = Object.assign({ style:site.key, theme:"", fonts:{}, intro:"", reveal:"mixed", ambient:"", amount:40, speed:1, music:null, designPanel:false }, C.design || {});
+  const D = Object.assign({ style:site.key, theme:"", fonts:{}, intro:"", reveal:"mixed", ambient:"", amount:40, speed:1, nameColor:"", ampColor:"", music:null, designPanel:false }, C.design || {});
   D.fonts = Object.assign({}, site.defaultFonts, D.fonts || {});
   if (!site.themes[D.theme]) D.theme = Object.keys(site.themes)[0];
   if (!site.intros.some(o => o[0] === D.intro)) D.intro = site.intros[0][0];
@@ -342,7 +342,10 @@ W.init = function(site){
     r.setProperty("--f-body", `"${f.body}", "Segoe UI", system-ui, sans-serif`);
   };
   W.applySpeed = () => document.documentElement.style.setProperty("--speed", Math.max(.3, +D.speed || 1));
-  W.applyTheme(D.theme); W.applyFonts(); W.applySpeed();
+  W.applyNameColors = () => { const r = document.documentElement.style;
+    D.nameColor ? r.setProperty("--name-color", D.nameColor) : r.removeProperty("--name-color");
+    D.ampColor ? r.setProperty("--amp-color", D.ampColor) : r.removeProperty("--amp-color"); };
+  W.applyTheme(D.theme); W.applyFonts(); W.applySpeed(); W.applyNameColors();
 
   /* ---- hero text ---- */
   const N1 = C.names?.first || "", N2 = C.names?.second || "";
@@ -667,6 +670,12 @@ function buildPanel(site, D){
     <input type="search" id="fontSearch" placeholder="Filter fonts…" aria-label="Filter calligraphy fonts" style="width:100%;margin-bottom:8px">
     <div class="callig" id="callig"></div>
     <label for="pScriptCustom" style="margin-top:10px">Or type any Google Font name<input type="text" id="pScriptCustom" placeholder="e.g. Corinthia"></label>
+    <h5>Colour of your names</h5>
+    <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:10px">
+      <label for="pNameCol" style="margin:0">Names colour<input type="color" id="pNameCol" style="width:56px;height:36px;border:0;background:none;padding:0"></label>
+      <label for="pAmpCol" style="margin:0">"&amp;" colour<input type="color" id="pAmpCol" style="width:56px;height:36px;border:0;background:none;padding:0"></label>
+      <button type="button" class="btn ghost" id="pColReset" style="padding:8px 14px">Use theme colour</button>
+    </div>
     <h5>Other fonts</h5>
     <label for="pHead">Headings<select id="pHead"></select></label>
     <label for="pBody">Normal text<select id="pBody"></select></label>
@@ -698,10 +707,16 @@ function buildPanel(site, D){
   $("#pScriptCustom").onchange = e => { const v = e.target.value.trim(); if (!v) return; D.fonts.script = v; W.applyFonts(); renderCallig($("#fontSearch").value); save(); };
   const fill = (id, list, val) => { const all = list.includes(val) ? list : [val, ...list]; $(id).innerHTML = all.map(f => `<option ${f === val ? "selected" : ""} style="font-family:'${esc(f)}'">${esc(f)}</option>`).join(""); };
   fill("#pHead", W.FONTS.heading, D.fonts.heading); fill("#pBody", W.FONTS.body, D.fonts.body);
+  const toHex = c => { const d = document.createElement("canvas").getContext("2d"); d.fillStyle = c; return d.fillStyle; };
+  const syncCols = () => { const cs = getComputedStyle($("#names") || document.body); $("#pNameCol").value = D.nameColor ? toHex(D.nameColor) : toHex(cs.color); const amp = $("#names .amp"); $("#pAmpCol").value = D.ampColor ? toHex(D.ampColor) : toHex(amp ? getComputedStyle(amp).color : cs.color); };
+  syncCols();
+  $("#pNameCol").oninput = e => { D.nameColor = e.target.value; W.applyNameColors(); save(); };
+  $("#pAmpCol").oninput = e => { D.ampColor = e.target.value; W.applyNameColors(); save(); };
+  $("#pColReset").onclick = () => { D.nameColor = ""; D.ampColor = ""; W.applyNameColors(); syncCols(); save(); };
   $("#pHead").onchange = e => { D.fonts.heading = e.target.value; W.applyFonts(); save(); };
   $("#pBody").onchange = e => { D.fonts.body = e.target.value; W.applyFonts(); save(); };
   $("#pIntro").value = D.intro; $("#pReveal").value = D.reveal; $("#pAmb").value = D.ambient; $("#pAmount").value = D.amount; $("#pSpeed").value = D.speed;
-  $("#themeBtns").onclick = e => { const b = e.target.closest("button"); if (!b) return; W.applyTheme(b.dataset.t); $$("#themeBtns button").forEach(x => x.setAttribute("aria-pressed", x === b)); save(); };
+  $("#themeBtns").onclick = e => { const b = e.target.closest("button"); if (!b) return; W.applyTheme(b.dataset.t); $$("#themeBtns button").forEach(x => x.setAttribute("aria-pressed", x === b)); syncCols(); save(); };
   $("#pIntro").onchange = e => { D.intro = e.target.value; save(); };
   $("#pReveal").onchange = e => { D.reveal = e.target.value; W.setupReveal(); save(); };
   $("#pAmb").onchange = e => { D.ambient = e.target.value; W.site.setAmbient && W.site.setAmbient(D.ambient, D.amount); save(); };
@@ -712,7 +727,7 @@ function buildPanel(site, D){
     $("#themeName").textContent = W.site.themes[D.theme].name;
     $("#pAmountV").textContent = D.amount === 0 ? "off" : D.amount; $("#pSpeedV").textContent = (+D.speed).toFixed(1) + "×";
     const q = JSON.stringify;
-    $("#pCode").textContent = `design: {\n  style: ${q(W.site.key)},\n  theme: ${q(D.theme)},\n  fonts: {\n    script:  ${q(D.fonts.script)},\n    heading: ${q(D.fonts.heading)},\n    body:    ${q(D.fonts.body)},\n  },\n  intro: ${q(D.intro)},\n  reveal: ${q(D.reveal)},\n  ambient: ${q(D.ambient)},\n  amount: ${D.amount},\n  speed: ${D.speed},\n  music: ${D.music ? q(D.music) : "null"},\n  designPanel: true,\n},`;
+    $("#pCode").textContent = `design: {\n  style: ${q(W.site.key)},\n  theme: ${q(D.theme)},\n  fonts: {\n    script:  ${q(D.fonts.script)},\n    heading: ${q(D.fonts.heading)},\n    body:    ${q(D.fonts.body)},\n  },\n  intro: ${q(D.intro)},\n  reveal: ${q(D.reveal)},\n  ambient: ${q(D.ambient)},\n  amount: ${D.amount},\n  speed: ${D.speed},\n  nameColor: ${q(D.nameColor || "")},\n  ampColor:  ${q(D.ampColor || "")},\n  music: ${D.music ? q(D.music) : "null"},\n  designPanel: true,\n},`;
   }
   $("#pCopy").onclick = () => {
     const t = $("#pCode").textContent, ok = () => $("#pCopied").textContent = "Copied!";
