@@ -96,7 +96,7 @@ window.WEDDING = {
     },
     {
       name: "Sangeet",
-      date: "Fri, 5 February 2027",
+      date: "Wed, 3 February 2027",
       time: "7:00 PM",
       venue: "Venue name",
       mapsQuery: "",
