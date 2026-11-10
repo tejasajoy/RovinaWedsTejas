@@ -255,30 +255,26 @@ window.WEDDING = {
      speed:   0.6 = faster, 1 = normal, 1.5 = slower                         */
   
    
-   design: {
-  style: "sakura",
-  theme: "midnight",
-  fonts: {
-    script:  "Pinyon Script",
-    heading: "Playfair Display",
-    body:    "Mulish",
-  },
-  intro: "curtain",
-  reveal: "mixed",
-  ambient: "petals-fireflies",
-  amount: 60,
-  speed: 2,
-  nameColor: "#1f2b3d",
-  ampColor:  "#b8860c",
-  music: [{"label":"Ocean waves","src":"music/WAVES.mp3","volume":70},{"label":"Piano strings","src":"music/PIRATES STRINGS.mp3","volume":70}],
-  designPanel: true,
-},
-   // colour of the "&" between the names; "" = theme colour
-    /* Background music. The first track plays first. Visitors can switch tracks and
-       change the volume with the ♫ button; volume is the starting level (0 to 100).
+  design: {
+    style: "sakura",
+    theme: "midnight",
+    fonts: {
+      script:  "Pinyon Script",
+      heading: "Playfair Display",
+      body:    "Mulish",
+    },
+    intro: "curtain",
+    reveal: "mixed",
+    ambient: "petals-fireflies",
+    amount: 60,
+    speed: 2,
+    nameColor: "#1f2b3d",
+    ampColor:  "#b8860c",   // colour of the "&" between the names; "" = theme colour
+    /* Background music. Tracks play together. Each has its own starting volume (0 to 100).
+       Visitors can switch each track on or off and change its volume with the ♫ button.
        Use null for no music. */
     music: [
-      { label: "Ocean waves",   src: "music/WAVES.mp3",          volume: 50 },
+      { label: "Ocean waves",   src: "music/WAVES.mp3",           volume: 50 },
       { label: "Piano strings", src: "music/PIRATES STRINGS.mp3", volume: 100 },
     ],
     designPanel: true,        // true while testing, false before you share the site
