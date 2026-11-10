@@ -279,4 +279,25 @@ window.WEDDING = {
     ],
     designPanel: true,        // true while testing, false before you share the site
   },
+
+  /* Meet the families: shown just after the couple section. Leave members empty to hide it. */
+  families: {
+    eyebrow: "Meet the",
+    title: "Families",
+    members: [
+      // { name: "Name Surname", relation: "Brother of the bride", photo: "photos/families/brother.jpg" },
+    ],
+    photos: [
+      // "photos/families/family1.jpg", ...   (4 or 5 photos, shown as a fixed grid, not a slideshow)
+    ],
+  },
+
+  /* Video bands placed just above "The Celebrations". Add more with extra entries. */
+  bands: [
+    { video: "videos/sakura%20white.mp4", quote: "" },
+  ],
+
+  /* Privacy: the watermark text is faint across the screen. Guests can also get their own
+     watermark with a link like ...?guest=Their%20Name. Leave empty for none. */
+  privacy: { watermark: "" },
 };

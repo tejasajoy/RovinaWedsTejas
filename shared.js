@@ -271,6 +271,9 @@ html,body,main,section{overflow-x:hidden;overflow-x:clip}   /* no sideways scrol
 .fab{position:fixed;z-index:65;width:50px;height:50px;border-radius:50%;border:0;background:var(--bg2);color:var(--accent);box-shadow:0 10px 26px color-mix(in srgb,var(--accent) 25%,transparent);cursor:pointer;display:grid;place-items:center;transition:transform .4s cubic-bezier(.3,1.4,.5,1),opacity .4s;font:700 13px var(--f-body)}
 .fab:hover{transform:scale(1.08)}
 #toTop{right:20px;bottom:20px;opacity:0;pointer-events:none;transform:translateY(20px);font-size:20px}
+.f1car{position:fixed;left:-170px;bottom:38vh;width:150px;z-index:95;pointer-events:none;animation:f1drive 1.9s cubic-bezier(.3,.1,.5,1) forwards}
+.f1car svg{width:100%;height:auto;overflow:visible}
+@keyframes f1drive{0%{transform:translateX(0) rotate(0)}35%{transform:translateX(45vw) rotate(-6deg)}60%{transform:translateX(70vw) rotate(9deg)}100%{transform:translateX(calc(100vw + 200px)) rotate(-3deg)}}
 #toTop.show{opacity:1;pointer-events:auto;transform:none}
 #musicBtn{right:20px;bottom:82px}
 #musicBtn .eq{display:flex;gap:3px;align-items:flex-end;height:18px}
@@ -417,6 +420,63 @@ W.init = function(site){
     holder.appendChild(v); vids.push(v); return true;
   };
   if (W.mountVideo($("#heroVideo"), media.hero)) $("#home")?.classList.add("has-video");
+  /* ---- light privacy: no right-click or drag-saving of photos, no printing, blurred when the tab is hidden,
+          and a faint name watermark (?guest=Name in the link, or privacy.watermark in config) ---- */
+  document.addEventListener("contextmenu", e => { if (!e.target.closest("input,textarea")) e.preventDefault(); });
+  document.addEventListener("dragstart", e => e.preventDefault());
+  document.head.insertAdjacentHTML("beforeend", `<style>
+    body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+    input,textarea{-webkit-user-select:text;user-select:text}
+    img,video{-webkit-user-drag:none;user-drag:none}
+    body.shield{filter:blur(24px) brightness(.5);transition:filter .15s}
+    #wm{position:fixed;inset:0;pointer-events:none;z-index:200;opacity:.5}
+    @media print{html,body{display:none!important}}
+  </style>`);
+  document.addEventListener("visibilitychange", () => document.body.classList.toggle("shield", document.hidden));
+  const who = new URLSearchParams(location.search).get("guest") || (C.privacy && C.privacy.watermark) || "";
+  if (who) {
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='170'><text x='30' y='100' transform='rotate(-25 150 85)' font-family='sans-serif' font-size='16' fill='#000' fill-opacity='.10'>${esc(who)}</text></svg>`;
+    document.body.insertAdjacentHTML("beforeend", `<div id="wm" aria-hidden="true" style="background-image:url('data:image/svg+xml;utf8,${encodeURIComponent(svg)}')"></div>`);
+  }
+
+  /* ---- meet the families, then an optional video band, both just above "The Celebrations" ---- */
+  const evSec = $("#events");
+  if (evSec && (C.families || C.bands)) {
+    let html = "";
+    if (C.families && C.families.members && C.families.members.length) {
+      const ini = n => (n || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+      html += `<section id="families" data-sec="families" class="families"><div class="wrap">
+        <p class="eyebrow">${esc(C.families.eyebrow || "Meet the")}</p>
+        <h2 class="ftitle">${esc(C.families.title || "Families")}</h2>
+        <div class="fam-grid" data-anim="up">${C.families.members.slice(0, 5).map(m => `
+          <figure class="fam">
+            <div class="fam-ph">${m.photo ? `<img src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy">` : `<span>${esc(ini(m.name))}</span>`}</div>
+            <figcaption><b>${esc(m.name)}</b><span>${esc(m.relation || "")}</span></figcaption>
+          </figure>`).join("")}</div>
+        ${C.families.photos && C.families.photos.length ? `<div class="fam-photos" data-anim="up">${C.families.photos.slice(0, 5).map(src => `<img src="${esc(src)}" alt="" loading="lazy">`).join("")}</div>` : ""}
+      </div></section>`;
+    }
+    (C.bands || []).forEach((b, i) => {
+      html += `<section id="band${i}" data-sec="band" class="vband band-plain"><div class="vbg" id="band${i}Video"></div>${b.quote ? `<div class="vb-text" data-anim="blur"><p class="vb-quote">${esc(b.quote)}</p></div>` : ""}</section>`;
+    });
+    evSec.insertAdjacentHTML("beforebegin", html);
+    (C.bands || []).forEach((b, i) => W.mountVideo($(`#band${i}Video`), b.video));
+  }
+  /* family-meet styles */
+  document.head.insertAdjacentHTML("beforeend", `<style>
+    .families{padding:90px 20px 60px;text-align:center}
+    .families .ftitle{font-family:var(--f-head);font-size:clamp(30px,4.5vw,46px);margin:6px 0 26px;color:var(--ink)}
+    .fam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:22px 16px;max-width:900px;margin:0 auto}
+    .fam{margin:0;display:grid;justify-items:center;gap:10px}
+    .fam-ph{width:min(120px,30vw);aspect-ratio:1;border-radius:50%;overflow:hidden;background:var(--soft);display:grid;place-items:center;font:700 26px var(--f-head);color:var(--accent);border:2px solid var(--gold)}
+    .fam-ph img{width:100%;height:100%;object-fit:cover}
+    .fam figcaption{display:grid;gap:2px;font-size:14px}.fam figcaption b{font-weight:700}.fam figcaption span{color:var(--muted);font-size:13px}
+    .fam-photos{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:900px;margin:34px auto 0}
+    .fam-photos img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px}
+    @media (max-width:760px){.fam-photos{grid-template-columns:repeat(2,1fr)}.fam-photos img:last-child:nth-child(odd){grid-column:1/-1;aspect-ratio:4/3}}
+    .band-plain{min-height:60vh}
+  </style>`);
+
   if (media.interlude && !$('[data-sec="interlude"]') && $("#sections")) {
     $("#sections").insertAdjacentHTML("beforeend", `<section id="interlude" data-sec="interlude" class="vband"><div class="vbg" id="interVideo"></div><div class="vb-text" data-anim="blur"><p class="vb-quote">${esc(C.interlude?.text || "")}</p>${C.interlude?.ref ? `<cite class="vb-cite">${esc(C.interlude.ref)}</cite>` : ""}</div></section>`);
     W.mountVideo($("#interVideo"), media.interlude);
@@ -656,7 +716,15 @@ W.init = function(site){
 
   /* ---- floating buttons ---- */
   document.body.insertAdjacentHTML("beforeend", `<button class="fab" id="toTop" type="button" aria-label="Back to top">&#8593;</button>`);
-  $("#toTop").onclick = () => scrollTo({ top:0, behavior: reduce ? "auto" : "smooth" });
+  $("#toTop").onclick = () => {
+    if (reduce) return scrollTo({ top:0, behavior:"auto" });
+    const car = document.createElement("div");
+    car.className = "f1car";
+    car.innerHTML = `<svg viewBox="0 0 160 60" aria-hidden="true"><rect x="30" y="34" width="110" height="10" rx="4" fill="#222"/><path d="M40 34 L60 18 L118 18 L132 34 Z" fill="var(--accent)"/><rect x="62" y="6" width="12" height="16" fill="#222"/><path d="M96 14 h22 v4 h-22 z" fill="#222"/><circle cx="48" cy="46" r="11" fill="#111"/><circle cx="48" cy="46" r="4" fill="#bbb"/><circle cx="118" cy="46" r="11" fill="#111"/><circle cx="118" cy="46" r="4" fill="#bbb"/><path d="M4 40 h20 M10 30 h14 M2 50 h16" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity=".6"/></svg>`;
+    document.body.appendChild(car);
+    setTimeout(() => scrollTo({ top:0, behavior:"smooth" }), 700);
+    setTimeout(() => car.remove(), 2000);
+  };
   /* ---- music: several tracks that play together, each with its own volume ----
      config.js music: [ { label, src, volume }, ... ]   (volume 0-100, the starting level)
      Visitors can switch each track on or off and change its volume; choices are remembered on that device. */
@@ -757,7 +825,7 @@ W.init = function(site){
     });
     if (D.reveal === "none" || reduce || !("IntersectionObserver" in window)) { $$("[data-anim],[data-draw]").forEach(el => el.classList.add("in")); return; }
     if (io) io.disconnect();
-    io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } }), { threshold:.12, rootMargin:"0px 0px -40px 0px" });
+    io = new IntersectionObserver(es => es.forEach(en => en.target.classList.toggle("in", en.isIntersecting)), { threshold:.12, rootMargin:"0px 0px -40px 0px" });
     $$("[data-anim],[data-draw]").forEach(el => {
       const sib = el.parentElement ? [...el.parentElement.children].indexOf(el) : 0;
       el.style.transitionDelay = (sib % 4) * 0.09 * D.speed + "s";
