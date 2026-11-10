@@ -66,7 +66,7 @@ window.WEDDING = {
     },
     together: "Two hearts, one faith, one journey",   // line between the two, or "" to hide
     frame:    "arch",   // photo shape: "rounded", "oval", "circle" or "arch"
-    layout:   "meet",      // "meet": bride left, groom right, parents shown, then they come together with a cross as you scroll
+    layout:   "meet",      // "meet": on the opening screen, bride left and groom right with parents; as you scroll they come together with a cross
                            // "cards": the older side-by-side cards with about text and tags
   },
    
