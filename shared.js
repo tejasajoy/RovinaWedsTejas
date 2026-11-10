@@ -55,7 +55,7 @@ const DEFAULT_TITLES = {
   faq:     { eyebrow:"Good to know",  title:"Questions",           nav:"FAQ" },
   interlude:{ eyebrow:"", title:"", nav:"" },
 };
-const REVEALS = [["mixed","Mixed (a bit of everything)"],["up","Float up"],["blur","Soft focus"],["zoom","Zoom in"],["slide","Slide from the sides"],["flip","Fold open"],["none","No scroll animation"]];
+const REVEALS = [["mixed","Mixed (a bit of everything)"],["up","Float up"],["blur","Soft focus"],["zoom","Zoom in"],["slide","Slide from the sides"],["flip","Fold open"],["drop","Drop down"],["tilt","Tilt up"],["spin","Turn in"],["none","No scroll animation"]];
 
 /* ---------------- shared styles ---------------- */
 const CSS = `
@@ -67,6 +67,9 @@ const CSS = `
 .js [data-anim="zoom"]{transform:scale(.84)}
 .js [data-anim="blur"]{filter:blur(12px);transform:scale(1.05)}
 .js [data-anim="flip"]{transform:perspective(900px) rotateX(32deg) translateY(30px);transform-origin:top}
+.js [data-anim="drop"]{transform:translateY(-64px)}
+.js [data-anim="tilt"]{transform:perspective(900px) rotateX(-18deg) translateY(44px);transform-origin:bottom}
+.js [data-anim="spin"]{transform:rotate(-14deg) scale(.7)}
 .js [data-anim].in,.no-reveal [data-anim]{opacity:1!important;transform:none!important;filter:none!important}
 .btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 28px;border-radius:999px;font:700 13px var(--f-body);letter-spacing:.14em;text-transform:uppercase;text-decoration:none;cursor:pointer;border:1.5px solid var(--accent);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,background .3s,color .3s}
 .btn.solid{background:var(--accent);color:var(--accent-ink,#fff)}
@@ -251,6 +254,15 @@ a.chip:hover{background:var(--accent);color:var(--accent-ink,#fff)}
 #musicBtn .eq i{width:3px;height:5px;background:var(--accent);border-radius:2px}
 #musicBtn.on .eq i{animation:ws-eq .8s ease-in-out infinite alternate}
 #musicBtn.on .eq i:nth-child(2){animation-delay:.2s}#musicBtn.on .eq i:nth-child(3){animation-delay:.4s}
+#musicMenu{right:78px;bottom:82px;width:40px;height:40px;font-size:18px}
+.mpanel{position:fixed;right:20px;bottom:140px;z-index:66;width:min(300px,calc(100vw - 40px));background:var(--bg2);color:var(--ink);border-radius:18px;padding:18px;box-shadow:0 24px 60px rgba(0,0,0,.25);border:1px solid var(--line);font:14px/1.4 var(--f-body)}
+.mp-title{font:700 12px var(--f-body);letter-spacing:.14em;text-transform:uppercase;margin:0 0 10px;color:var(--muted)}
+.mp-tracks{display:grid;gap:6px;margin-bottom:14px}
+.mp-tr{padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:transparent;color:inherit;text-align:left;cursor:pointer;font:inherit}
+.mp-tr.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.mp-vol{display:grid;gap:6px;font-weight:700;font-size:13px}
+.mp-vol input{width:100%;accent-color:var(--accent)}
+.mp-stop{margin-top:12px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
 @keyframes ws-eq{to{height:18px}}
 
 /* design panel */
@@ -574,10 +586,43 @@ W.init = function(site){
   /* ---- floating buttons ---- */
   document.body.insertAdjacentHTML("beforeend", `<button class="fab" id="toTop" type="button" aria-label="Back to top">&#8593;</button>`);
   $("#toTop").onclick = () => scrollTo({ top:0, behavior: reduce ? "auto" : "smooth" });
+  /* ---- music: one or more tracks, each with its own default volume ----
+     config.js music: [ { label, src, volume }, ... ]   (volume 0-100)
+     A visitor can switch track and change volume; their choice is remembered on that device. */
   if (D.music) {
-    document.body.insertAdjacentHTML("beforeend", `<button class="fab" id="musicBtn" type="button" aria-label="Play music"><span class="eq"><i></i><i></i><i></i></span></button><audio id="audio" loop preload="none"></audio>`);
-    const b = $("#musicBtn"), a = $("#audio"); a.src = D.music;
-    b.onclick = () => { if (a.paused) a.play().then(() => { b.classList.add("on"); b.setAttribute("aria-label", "Pause music"); }).catch(() => {}); else { a.pause(); b.classList.remove("on"); b.setAttribute("aria-label", "Play music"); } };
+    const tracks = (Array.isArray(D.music) ? D.music : [D.music]).map(t => typeof t === "string" ? { src:t, label:"Music", volume:70 } : Object.assign({ label:"Music", volume:70 }, t));
+    let saved = null; try { saved = JSON.parse(localStorage.getItem("wsMusic") || "null"); } catch (e) {}
+    let cur = saved && tracks[saved.track] ? saved.track : 0;
+    let vol = saved && typeof saved.volume === "number" ? saved.volume : null;   // null = use the track's default
+    document.body.insertAdjacentHTML("beforeend",
+      `<button class="fab mbtn-menu" id="musicMenu" type="button" aria-label="Music options" aria-expanded="false">&#9835;</button>
+       <button class="fab" id="musicBtn" type="button" aria-label="Play music"><span class="eq"><i></i><i></i><i></i></span></button>
+       <div id="musicPanel" class="mpanel" hidden>
+         <p class="mp-title">Music</p>
+         <div class="mp-tracks">${tracks.map((t, i) => `<button type="button" class="mp-tr" data-tr="${i}">${esc(t.label)}</button>`).join("")}</div>
+         <label class="mp-vol">Volume <span id="musicVolV"></span>
+           <input id="musicVol" type="range" min="0" max="100" step="1" aria-label="Music volume"></label>
+         <button type="button" class="mp-stop" id="musicStop">Stop music</button>
+       </div>
+       <audio id="audio" loop preload="none"></audio>`);
+    const b = $("#musicBtn"), a = $("#audio"), p = $("#musicPanel"), vr = $("#musicVol"), menu = $("#musicMenu");
+    const pct = () => vol ?? tracks[cur].volume;
+    const remember = () => { try { localStorage.setItem("wsMusic", JSON.stringify({ track: cur, volume: vol })); } catch (e) {} };
+    const setOn = on => { b.classList.toggle("on", on); b.setAttribute("aria-label", on ? "Pause music" : "Play music"); };
+    const sync = () => {
+      a.volume = pct() / 100; vr.value = pct(); $("#musicVolV").textContent = pct() + "%";
+      p.querySelectorAll("[data-tr]").forEach(x => x.classList.toggle("on", +x.dataset.tr === cur));
+    };
+    const load = i => { cur = i; a.src = encodeURI(tracks[i].src); sync(); remember(); };
+    const play = () => a.play().then(() => setOn(true)).catch(() => setOn(false));
+    load(cur);
+    b.onclick = () => { if (a.paused) play(); else { a.pause(); setOn(false); } };
+    const openMenu = o => { p.hidden = !o; menu.setAttribute("aria-expanded", o); };
+    menu.onclick = () => openMenu(p.hidden);
+    p.querySelectorAll("[data-tr]").forEach(x => x.onclick = () => { load(+x.dataset.tr); if (!a.paused) play(); });
+    vr.oninput = e => { vol = +e.target.value; a.volume = vol / 100; $("#musicVolV").textContent = vol + "%"; remember(); };
+    $("#musicStop").onclick = () => { a.pause(); setOn(false); openMenu(false); };
+    document.addEventListener("click", e => { if (!p.hidden && !e.target.closest("#musicPanel,#musicMenu")) openMenu(false); });
   }
 
   /* ---- ripples ---- */
@@ -727,7 +772,7 @@ function buildPanel(site, D){
     $("#themeName").textContent = W.site.themes[D.theme].name;
     $("#pAmountV").textContent = D.amount === 0 ? "off" : D.amount; $("#pSpeedV").textContent = (+D.speed).toFixed(1) + "×";
     const q = JSON.stringify;
-    $("#pCode").textContent = `design: {\n  style: ${q(W.site.key)},\n  theme: ${q(D.theme)},\n  fonts: {\n    script:  ${q(D.fonts.script)},\n    heading: ${q(D.fonts.heading)},\n    body:    ${q(D.fonts.body)},\n  },\n  intro: ${q(D.intro)},\n  reveal: ${q(D.reveal)},\n  ambient: ${q(D.ambient)},\n  amount: ${D.amount},\n  speed: ${D.speed},\n  nameColor: ${q(D.nameColor || "")},\n  ampColor:  ${q(D.ampColor || "")},\n  music: ${D.music ? q(D.music) : "null"},\n  designPanel: true,\n},`;
+    $("#pCode").textContent = `design: {\n  style: ${q(W.site.key)},\n  theme: ${q(D.theme)},\n  fonts: {\n    script:  ${q(D.fonts.script)},\n    heading: ${q(D.fonts.heading)},\n    body:    ${q(D.fonts.body)},\n  },\n  intro: ${q(D.intro)},\n  reveal: ${q(D.reveal)},\n  ambient: ${q(D.ambient)},\n  amount: ${D.amount},\n  speed: ${D.speed},\n  nameColor: ${q(D.nameColor || "")},\n  ampColor:  ${q(D.ampColor || "")},\n  music: ${D.music ? JSON.stringify(D.music) : "null"},\n  designPanel: true,\n},`;
   }
   $("#pCopy").onclick = () => {
     const t = $("#pCode").textContent, ok = () => $("#pCopied").textContent = "Copied!";

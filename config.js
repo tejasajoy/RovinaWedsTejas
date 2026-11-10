@@ -266,7 +266,13 @@ window.WEDDING = {
     speed: 1,
     nameColor: "#1f2b3d" ,            // colour of "Rovina" and "Tejas", e.g. "#ffffff" (white), "#d4af37" (gold), "#c8603f"; "" = theme colour
     ampColor:  "",            // colour of the "&" between the names; "" = theme colour
-    music: null,              // e.g. "music/song.mp3" (upload the file first) or null
+    /* Background music. The first track plays first. Visitors can switch tracks and
+       change the volume with the ♫ button; volume is the starting level (0 to 100).
+       Use null for no music. */
+    music: [
+      { label: "Ocean waves",   src: "music/WAVES.mp3",          volume: 70 },
+      { label: "Piano strings", src: "music/PIRATES STRINGS.mp3", volume: 70 },
+    ],
     designPanel: true,        // true while testing, false before you share the site
   },
 };
