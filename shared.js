@@ -466,8 +466,9 @@ W.init = function(site){
   const evSec = $("#events");
   if (evSec && (C.families || C.bands)) {
     let html = "";
-    if (C.families && (((C.families.left || {}).photos || []).length || ((C.families.right || {}).photos || []).length)) {
-      const side = (x, cls) => `<div class="fside ${cls}"><h3 class="fside-h">${esc((x && x.label) || "")}</h3><div class="fside-grid">${((x && x.photos) || []).slice(0, 12).map(src => `<img src="${esc(src)}" alt="" loading="lazy">`).join("")}</div></div>`;
+    if (showFamilies) {
+      const tiles = (x, i) => (x && x.photos && x.photos.length) ? x.photos.slice(0, 12).map(src => `<img src="${esc(src)}" alt="" loading="lazy">`).join("") : [0, 1, 2, 3].map(k => `<div class="fph" style="background:linear-gradient(135deg,var(--soft),var(--accent))"><span>${i ? "Groom" : "Bride"}'s family</span></div>`).join("");
+      const side = (x, cls) => `<div class="fside ${cls}"><h3 class="fside-h">${esc((x && x.label) || "")}</h3><div class="fside-grid">${tiles(x, cls === "fr" ? 1 : 0)}</div></div>`;
       html += `<section id="families" data-sec="families" class="families"><div class="wrap">
         <p class="eyebrow">${esc(C.families.eyebrow || "Meet the")}</p>
         <h2 class="ftitle">${esc(C.families.title || "Families")}</h2>
@@ -487,7 +488,8 @@ W.init = function(site){
     .fam-split{display:grid;grid-template-columns:1fr 1fr;gap:26px;max-width:1000px;margin:0 auto;text-align:left}
     .fside-h{font-family:var(--f-head);font-weight:400;font-size:clamp(18px,2.2vw,22px);margin:0 0 12px;text-align:center;color:var(--accent)}
     .fside-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-    .fside-grid img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px}
+    .fside-grid img,.fph{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px}
+    .fph{display:grid;place-items:center;color:#fff;font-size:12px;text-align:center;opacity:.8}
     @media (max-width:760px){.fam-split{gap:14px}.fside-grid{grid-template-columns:1fr;gap:8px}}
     .band-plain{min-height:60vh}
   </style>`);
@@ -509,7 +511,9 @@ W.init = function(site){
   /* ---- sections: order, hide, titles, nav ---- */
   const S = C.sections || {};
   const extra = [];
-  if (C.families && (((C.families.left || {}).photos || []).length || ((C.families.right || {}).photos || []).length)) extra.push("families");
+  const famPhotos = C.families && (((C.families.left || {}).photos || []).length || ((C.families.right || {}).photos || []).length);
+  const showFamilies = !!C.families && (famPhotos || D.designPanel);   // while testing, show placeholders until photos are added
+  if (showFamilies) extra.push("families");
   (C.bands || []).forEach((b, i) => extra.push("band" + i));
   let order = (S.order && S.order.length ? S.order : Object.keys(DEFAULT_TITLES)).filter(k => DEFAULT_TITLES[k]);
   const evAt = order.indexOf("events");
