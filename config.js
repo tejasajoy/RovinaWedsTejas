@@ -42,7 +42,7 @@ window.WEDDING = {
     end:     "2027-02-05T23:00:00+05:30",
   },
   city:    "Hubli, Karnataka",
-  hashtag: "#Rovina + Tejas",
+  hashtag: "#Rovina&Tejas",
 
   /* ---------- 3. BRIDE & GROOM SECTION ----------
      photo: upload to the "photos" folder and write e.g. "photos/rovina.jpg", or null.
@@ -65,7 +65,7 @@ window.WEDDING = {
       facts:    ["F1, MotoGP", "Best cook at home", "Always early"],
     },
     together: "Two hearts, one faith, one journey",   // line between the two, or "" to hide
-    frame:    "rounded",   // photo shape: "rounded", "oval", "circle" or "arch"
+    frame:    "arch",   // photo shape: "rounded", "oval", "circle" or "arch"
     layout:   "meet",      // "meet": bride left, groom right, parents shown, then they come together with a cross as you scroll
                            // "cards": the older side-by-side cards with about text and tags
   },
@@ -105,7 +105,7 @@ window.WEDDING = {
       name: "Sangeeth",
       date: "Wed, 3 February 2027",
       time: "7:00 PM",
-      venue: "Family home",
+      venue: "Family Home",
       mapsQuery: "",
       dress: "Party Wear",
       color: "#f3cf55",
@@ -138,7 +138,7 @@ window.WEDDING = {
 
   /* ---------- 5. OUR STORY ---------- */
   story: [
-    { when: "2026", title: "We met",       text: "Write a line or two about how you first met.",       photo: null },
+    { when: "6th June 2026", title: "We met",       text: "Write a line or two about how you first met.",       photo: null },
     { when: "2026", title: "First selfie",   text: "A favourite memory, a trip or an inside joke.",      photo: null },
     { when: "2026", title: "She said yes", text: "How the question was asked, and who cried first.",  photo: null },
   ],
@@ -158,7 +158,7 @@ window.WEDDING = {
   /* ---------- 7. VENUES ---------- */
   venues: [
     {
-      label: "The Ceremony",
+      label: "Holy Matrimony",
       name: "Agape Church",
       address: "Hubli, Karnataka",
       mapsQuery: "Agape Church Hubli",
@@ -253,27 +253,33 @@ window.WEDDING = {
               sakura → "petals", "petals-fireflies", "fireflies", "none"
      amount:  how much background effect, 0 to 100
      speed:   0.6 = faster, 1 = normal, 1.5 = slower                         */
-  design: {
-    style: "ocean",
-    theme: "golden",
-    fonts: {
-      script:  "Great Vibes",         // calligraphy for your names (40+ choices in the Design panel)
-      heading: "Cormorant Garamond",  // section titles
-      body:    "Mulish",              // normal text
-    },
-    intro: "dawn",
-    reveal: "mixed",
-    ambient: "glow",
-    amount: 40,
-    speed: 1,
-    nameColor: "#1f2b3d" ,            // colour of "Rovina" and "Tejas", e.g. "#ffffff" (white), "#d4af37" (gold), "#c8603f"; "" = theme colour
-    ampColor:  "",            // colour of the "&" between the names; "" = theme colour
+  
+   
+   design: {
+  style: "sakura",
+  theme: "midnight",
+  fonts: {
+    script:  "Pinyon Script",
+    heading: "Playfair Display",
+    body:    "Mulish",
+  },
+  intro: "curtain",
+  reveal: "mixed",
+  ambient: "petals-fireflies",
+  amount: 60,
+  speed: 2,
+  nameColor: "#1f2b3d",
+  ampColor:  "#b8860c",
+  music: [{"label":"Ocean waves","src":"music/WAVES.mp3","volume":70},{"label":"Piano strings","src":"music/PIRATES STRINGS.mp3","volume":70}],
+  designPanel: true,
+},
+   // colour of the "&" between the names; "" = theme colour
     /* Background music. The first track plays first. Visitors can switch tracks and
        change the volume with the ♫ button; volume is the starting level (0 to 100).
        Use null for no music. */
     music: [
-      { label: "Ocean waves",   src: "music/WAVES.mp3",          volume: 70 },
-      { label: "Piano strings", src: "music/PIRATES STRINGS.mp3", volume: 70 },
+      { label: "Ocean waves",   src: "music/WAVES.mp3",          volume: 50 },
+      { label: "Piano strings", src: "music/PIRATES STRINGS.mp3", volume: 100 },
     ],
     designPanel: true,        // true while testing, false before you share the site
   },
