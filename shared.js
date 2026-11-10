@@ -272,6 +272,19 @@ html,body,main,section{overflow-x:hidden;overflow-x:clip}   /* no sideways scrol
 .fab{position:fixed;z-index:65;width:50px;height:50px;border-radius:50%;border:0;background:var(--bg2);color:var(--accent);box-shadow:0 10px 26px color-mix(in srgb,var(--accent) 25%,transparent);cursor:pointer;display:grid;place-items:center;transition:transform .4s cubic-bezier(.3,1.4,.5,1),opacity .4s;font:700 13px var(--f-body)}
 .fab:hover{transform:scale(1.08)}
 #toTop{right:20px;bottom:20px;opacity:0;pointer-events:none;transform:translateY(20px);font-size:20px}
+.cover{position:fixed;inset:0;z-index:150;pointer-events:none;visibility:hidden}
+.cover.in,.cover.out{visibility:visible}
+.cover.curtain .cu{position:absolute;top:0;bottom:0;width:50.5%;background:linear-gradient(90deg,#6e1a2c,#b8556a 30%,#e7a6b3 50%,#b8556a 70%,#6e1a2c);transition:transform .75s cubic-bezier(.6,0,.3,1);box-shadow:inset 0 0 60px rgba(0,0,0,.35)}
+.cover.curtain .cu-l{left:0;transform:translateX(-102%)}
+.cover.curtain .cu-r{right:0;transform:translateX(102%)}
+.cover.curtain.in .cu-l,.cover.curtain.in .cu-r{transform:none}
+.cover.curtain.out .cu-l{transform:translateX(-102%)}
+.cover.curtain.out .cu-r{transform:translateX(102%)}
+.cover.fall .fall-sheet{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(180deg,#0b3c5d,#1f7aa8 55%,#7fd0f0);transform:translateY(-102%);transition:transform .7s cubic-bezier(.4,0,.8,.6)}
+.cover.fall .fall-sheet svg{position:absolute;left:0;bottom:-38px;width:100%;height:40px}
+.cover.fall .fall-sheet svg path{fill:#1f7aa8}
+.cover.fall.in .fall-sheet{transform:none;transition:transform .7s cubic-bezier(.2,.6,.4,1)}
+.cover.fall.out .fall-sheet{transform:translateY(102%);transition:transform .8s cubic-bezier(.4,0,.8,.6)}
 .f1car{position:fixed;left:-170px;bottom:38vh;width:150px;z-index:95;pointer-events:none;animation:f1drive 1.9s cubic-bezier(.3,.1,.5,1) forwards}
 .f1car svg{width:100%;height:auto;overflow:visible}
 @keyframes f1drive{0%{transform:translateX(0) rotate(0)}35%{transform:translateX(45vw) rotate(-6deg)}60%{transform:translateX(70vw) rotate(9deg)}100%{transform:translateX(calc(100vw + 200px)) rotate(-3deg)}}
@@ -458,7 +471,7 @@ W.init = function(site){
       </div></section>`;
     }
     (C.bands || []).forEach((b, i) => {
-      html += `<section id="band${i}" data-sec="band" class="vband band-plain"><div class="vbg" id="band${i}Video"></div>${b.quote ? `<div class="vb-text" data-anim="blur"><p class="vb-quote">${esc(b.quote)}</p></div>` : ""}</section>`;
+      html += `<section id="band${i}" data-sec="band${i}" class="vband band-plain"><div class="vbg" id="band${i}Video"></div>${b.quote ? `<div class="vb-text" data-anim="blur"><p class="vb-quote">${esc(b.quote)}</p></div>` : ""}</section>`;
     });
     evSec.insertAdjacentHTML("beforebegin", html);
     (C.bands || []).forEach((b, i) => W.mountVideo($(`#band${i}Video`), b.video));
@@ -494,7 +507,12 @@ W.init = function(site){
 
   /* ---- sections: order, hide, titles, nav ---- */
   const S = C.sections || {};
-  const order = (S.order && S.order.length ? S.order : Object.keys(DEFAULT_TITLES)).filter(k => DEFAULT_TITLES[k]);
+  const extra = [];
+  if (C.families && C.families.members && C.families.members.length) extra.push("families");
+  (C.bands || []).forEach((b, i) => extra.push("band" + i));
+  let order = (S.order && S.order.length ? S.order : Object.keys(DEFAULT_TITLES)).filter(k => DEFAULT_TITLES[k]);
+  const evAt = order.indexOf("events");
+  order = [...order.slice(0, evAt < 0 ? order.length : evAt), ...extra, ...order.slice(evAt < 0 ? order.length : evAt)];
   const hide = new Set(S.hide || []);
   const titles = k => Object.assign({}, DEFAULT_TITLES[k], (S.titles || {})[k]);
   const holder = $("#sections");
@@ -718,7 +736,7 @@ W.init = function(site){
   /* ---- floating buttons ---- */
   document.body.insertAdjacentHTML("beforeend", `<button class="fab" id="toTop" type="button" aria-label="Back to top">&#8593;</button>`);
   $("#toTop").onclick = () => {
-    if (reduce) return scrollTo({ top:0, behavior:"auto" });
+    if (reduce) return scrollTo({ top:0, behavior:"auto" });   // no animation for reduced-motion visitors
     const car = document.createElement("div");
     car.className = "f1car";
     car.innerHTML = `<svg viewBox="0 0 200 80" aria-hidden="true">
@@ -735,8 +753,17 @@ W.init = function(site){
       <circle cx="160" cy="64" r="12" fill="#151515"/><circle cx="160" cy="64" r="5" fill="#bbb"/>
     </svg>`;
     document.body.appendChild(car);
-    setTimeout(() => scrollTo({ top:0, behavior:"smooth" }), 700);
-    setTimeout(() => car.remove(), 2000);
+    const cover = document.createElement("div");
+    const curtain = site.key === "sakura";
+    cover.className = "cover " + (curtain ? "curtain" : "fall");
+    cover.innerHTML = curtain
+      ? `<div class="cu cu-l"></div><div class="cu cu-r"></div>`
+      : `<div class="fall-sheet"><svg viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 22 Q50 2 100 22 T200 22 T300 22 T400 22 V40 H0 Z"/></svg></div>`;
+    document.body.appendChild(cover);
+    setTimeout(() => cover.classList.add("in"), 1000);                       // closes over the page
+    setTimeout(() => scrollTo({ top:0, behavior:"auto" }), 1700);              // jump to the top while covered
+    setTimeout(() => { cover.classList.remove("in"); cover.classList.add("out"); }, 1850);  // reveals the top
+    setTimeout(() => { cover.remove(); car.remove(); }, 2900);
   };
   /* ---- music: several tracks that play together, each with its own volume ----
      config.js music: [ { label, src, volume }, ... ]   (volume 0-100, the starting level)
