@@ -85,7 +85,7 @@ a.chip:hover{background:var(--accent);color:var(--accent-ink,#fff)}
 .ph{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-family:var(--f-script);font-size:34px;text-shadow:0 2px 10px rgba(0,0,0,.18);text-align:center;padding:10px}
 .ph .big{font-size:110px;line-height:1;opacity:.9}
 
-html,body{overflow-x:hidden;overflow-x:clip}   /* no sideways scrolling or gap on phones */
+html,body,main,section{overflow-x:hidden;overflow-x:clip}   /* no sideways scrolling or gap on phones */
 /* meet layout */
 .meet{height:230vh;position:relative;margin-top:24px}
 .meet-stage{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;justify-items:center;max-width:1000px;margin:0 auto;padding:0 20px}
@@ -151,6 +151,9 @@ html,body{overflow-x:hidden;overflow-x:clip}   /* no sideways scrolling or gap o
   .tl-line,.tl-fill{left:27px}
   .ev{grid-template-columns:56px minmax(0,1fr);gap:16px}
   .ev>*{min-width:0}
+  .ev .node,.ev:nth-of-type(odd) .node{grid-column:1;grid-row:1}
+  .ev .card,.ev:nth-of-type(odd) .card{grid-column:2;grid-row:1;text-align:left}
+  .ev .card .chips,.ev:nth-of-type(odd) .card .chips{justify-content:flex-start}
   .ev .node{grid-column:1}
   .ev .card,.ev:nth-of-type(odd) .card{grid-column:2;text-align:left}
   .ev .card .chips{justify-content:flex-start}
@@ -692,10 +695,12 @@ W.init = function(site){
       const ps = st.map((s, i) => s.on ? audios[i].play().then(() => true, () => false) : Promise.resolve(false));
       return Promise.all(ps).then(r => { if (r.some(Boolean)) setOn(true); return r.some(Boolean); });
     };
-    // play by default; browsers block sound until the visitor interacts, so start on the first touch, click, key or scroll
+    // play by default; phones block sound until the visitor taps or presses a key, so start on the first of those
     const armStart = () => {
-      const go = () => { startAll(); ["pointerdown","keydown","touchstart","scroll","wheel"].forEach(ev => removeEventListener(ev, go, true)); };
-      ["pointerdown","keydown","touchstart","scroll","wheel"].forEach(ev => addEventListener(ev, go, { capture: true, passive: true }));
+      const evs = ["pointerdown", "pointerup", "touchend", "click", "keydown"];
+      const done = () => evs.forEach(ev => removeEventListener(ev, go, true));
+      const go = () => { startAll().then(ok => { if (ok) done(); }); };   // keep listening until the sound really starts
+      evs.forEach(ev => addEventListener(ev, go, { capture: true }));
     };
     startAll().then(ok => { if (!ok) armStart(); });
     const stopAll = () => { audios.forEach(a => a.pause()); setOn(false); };
