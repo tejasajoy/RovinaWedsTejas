@@ -459,10 +459,11 @@ W.init = function(site){
         <p class="about">${esc(x.about)}</p>
         ${x.facts?.length ? `<div class="chips">${x.facts.map(f => `<span class="chip">${esc(f)}</span>`).join("")}</div>` : ""}
       </article>`;
-    $("#coupleGrid").innerHTML = `<div class="couple">${p(C.couple.bride, "left", 0)}
+    if (C.couple.layout === "cards") {
+      $("#coupleGrid").innerHTML = `<div class="couple">${p(C.couple.bride, "left", 0)}
         <div class="couple-mid" data-anim="zoom"><svg class="rings" viewBox="0 0 110 76" aria-hidden="true"><circle cx="40" cy="38" r="28"/><circle cx="70" cy="38" r="28"/></svg>${C.couple.together ? `<p class="together">${esc(C.couple.together)}</p>` : ""}</div>
         ${p(C.couple.groom, "right", 1)}</div>`;
-    if (C.couple.layout !== "cards") {
+    } else {
       /* "meet" layout: bride on the left, groom on the right, parents shown first.
          As you scroll, the parents fade away, the two come together, and a cross appears between them. */
       const side = (x, i, parents, cls) => `
@@ -472,8 +473,7 @@ W.init = function(site){
           <p class="role">${esc(x.role)}</p>
           ${parents ? `<p class="ms-parents">${esc(parents)}</p>` : ""}
         </div>`;
-      const host = document.createElement("div");
-      host.innerHTML = `
+      $("#coupleGrid").innerHTML = `
         <div class="meet" id="meet">
           <div class="meet-stage">
             ${side(C.couple.bride, 0, C.parents?.first, "ms-l")}
@@ -482,12 +482,6 @@ W.init = function(site){
             ${C.couple.together ? `<p class="ms-together">${esc(C.couple.together)}</p>` : ""}
           </div>
         </div>`;
-      const hc = document.querySelector(".hcontent");
-      if (hc) {   // the split opening goes into the hero, right above the date
-        hc.insertBefore(host.firstElementChild, $("#dateLine") || null);
-        if ($("#names")) $("#names").style.display = "none";
-        if ($("#parents")) $("#parents").style.display = "none";
-      }
       const meet = $("#meet"), L = meet.querySelector(".ms-l"), R = meet.querySelector(".ms-r"), X = meet.querySelector(".ms-cross"), T = meet.querySelector(".ms-together");
       let ticking = false;
       const update = () => {
