@@ -318,7 +318,7 @@ html,body{overflow-x:hidden;overflow-x:clip}   /* no sideways scrolling or gap o
 @supports not (mask:radial-gradient(#000,#000)){.intro-iris.open{opacity:0}}
 .intro-iris .ii{transition:opacity .5s,transform .7s}
 .intro-iris.open .ii{opacity:0;transform:scale(.92)}
-.intro-iris b{font-family:var(--f-script);font-weight:400;font-size:clamp(64px,12vw,120px);display:block;line-height:1.1}
+.intro-iris b{font-family:var(--f-script);font-weight:400;font-size:clamp(44px,12vw,120px);display:block;line-height:1.1}
 .intro-iris small{display:block;letter-spacing:.24em;text-transform:uppercase;font-size:12px;color:var(--muted);margin:8px 0 26px;font-family:var(--f-body)}
 .intro-iris .ring{width:120px;height:120px;margin:0 auto 10px;border-radius:50%;border:1.5px solid var(--gold);animation:ws-breathe 2.4s ease-in-out infinite}
 @keyframes ws-breathe{50%{transform:scale(1.08);opacity:.5}}

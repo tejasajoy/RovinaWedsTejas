@@ -83,7 +83,7 @@ nav.solid .links a::after{background:var(--accent)}
 .hcontent{position:relative}
 .cross{width:28px;height:40px;margin:0 auto 14px;filter:drop-shadow(0 0 14px color-mix(in srgb,var(--sun) 80%,transparent))}
 .invite{max-width:46ch;margin:0 auto;font-family:var(--f-head);font-size:20px;font-style:italic;text-shadow:0 1px 14px rgba(0,0,0,.35)}
-.names{font-family:var(--f-script);font-weight:400;font-size:clamp(70px,14vw,156px);line-height:1.1;margin:12px 0 2px;color:var(--name-color,#fff);text-shadow:0 4px 34px rgba(0,0,0,.35)}
+.names{font-family:var(--f-script);font-weight:400;font-size:clamp(44px,13vw,156px);line-height:1.1;margin:12px 0 2px;color:var(--name-color,#fff);text-shadow:0 4px 34px rgba(0,0,0,.35)}
 .names .ch{display:inline-block;animation:rise calc(1.3s*var(--speed)) cubic-bezier(.2,.8,.2,1) both;animation-delay:calc((var(--i) * 65ms + 500ms) * var(--speed))}
 .names .amp{font-size:.55em;color:var(--amp-color,var(--sun));padding:0 .15em;vertical-align:.25em}
 @keyframes rise{from{opacity:0;transform:translateY(50px);filter:blur(10px)}}
@@ -111,7 +111,7 @@ nav.solid .links a::after{background:var(--accent)}
 
 /* dawn opening */
 #dawnIntro{position:fixed;inset:0;z-index:100;background:#06070d;color:#fff;display:grid;place-items:center;text-align:center;cursor:pointer;transition:opacity calc(1.8s*var(--speed)) ease}
-#dawnIntro b{display:block;font-family:var(--f-script);font-weight:400;font-size:clamp(64px,12vw,120px);line-height:1.1;opacity:0;transform:translateY(16px);transition:opacity calc(1.2s*var(--speed)) ease .2s,transform calc(1.2s*var(--speed)) ease .2s}
+#dawnIntro b{display:block;font-family:var(--f-script);font-weight:400;font-size:clamp(44px,12vw,120px);line-height:1.1;opacity:0;transform:translateY(16px);transition:opacity calc(1.2s*var(--speed)) ease .2s,transform calc(1.2s*var(--speed)) ease .2s}
 #dawnIntro small{display:block;letter-spacing:.24em;text-transform:uppercase;font-size:12px;opacity:0;transition:opacity calc(1s*var(--speed)) ease .9s}
 #dawnIntro .glow{position:absolute;left:50%;top:62%;width:60vmax;height:60vmax;margin:-30vmax 0 0 -30vmax;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--sun) 55%,transparent),transparent 60%);opacity:0;transform:translateY(20%) scale(.6);transition:opacity calc(2.4s*var(--speed)) ease .4s,transform calc(2.8s*var(--speed)) cubic-bezier(.25,.6,.2,1) .4s}
 #dawnIntro.play b,#dawnIntro.play small{opacity:1;transform:none}
