@@ -66,6 +66,8 @@ window.WEDDING = {
     },
     together: "Two hearts, one faith, one journey",   // line between the two, or "" to hide
     frame:    "rounded",   // photo shape: "rounded", "oval", "circle" or "arch"
+    layout:   "meet",      // "meet": bride left, groom right, parents shown, then they come together with a cross as you scroll
+                           // "cards": the older side-by-side cards with about text and tags
   },
    
   /* ---------- 4. EVENTS ----------

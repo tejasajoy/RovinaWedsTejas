@@ -85,6 +85,24 @@ a.chip:hover{background:var(--accent);color:var(--accent-ink,#fff)}
 .ph{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-family:var(--f-script);font-size:34px;text-shadow:0 2px 10px rgba(0,0,0,.18);text-align:center;padding:10px}
 .ph .big{font-size:110px;line-height:1;opacity:.9}
 
+/* meet layout */
+.meet{height:230vh;position:relative;margin-top:24px}
+.meet-stage{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;justify-items:center;max-width:1000px;margin:0 auto;padding:0 20px}
+.ms{display:grid;justify-items:center;gap:10px;text-align:center;will-change:transform;grid-row:1;transition:none}
+.ms-l{grid-column:1}.ms-r{grid-column:2}
+.ms-photo{width:min(230px,44vw)}
+.ms-name{font-family:var(--f-script);font-weight:400;font-size:clamp(40px,7vw,68px);line-height:1.05;color:var(--accent);margin:0}
+.ms .role{margin:0}
+.ms-parents{max-width:30ch;margin:0;color:var(--muted);font-size:14px;line-height:1.5;transition:opacity .2s}
+.ms-cross{position:absolute;left:50%;top:50%;width:34px;height:44px;margin:-22px 0 0 -17px;stroke:var(--gold);opacity:0;pointer-events:none}
+.ms-together{position:absolute;bottom:14vh;left:0;right:0;text-align:center;font-family:var(--f-head);font-style:italic;color:var(--muted);margin:0;opacity:0}
+@media (max-width:760px){
+  .meet-stage{grid-template-columns:1fr;grid-template-rows:1fr 1fr;padding:0 16px}
+  .ms-l{grid-row:1;grid-column:1}.ms-r{grid-row:2;grid-column:1}
+  .ms-photo{width:min(150px,38vw)}
+  .ms-name{font-size:42px}
+  .ms-cross{top:50%}
+}
 /* couple */
 .couple{display:grid;grid-template-columns:1fr auto 1fr;gap:30px;align-items:start;margin-top:54px}
 .person{text-align:center;display:grid;justify-items:center;gap:6px}
@@ -441,9 +459,55 @@ W.init = function(site){
         <p class="about">${esc(x.about)}</p>
         ${x.facts?.length ? `<div class="chips">${x.facts.map(f => `<span class="chip">${esc(f)}</span>`).join("")}</div>` : ""}
       </article>`;
-    $("#coupleGrid").innerHTML = `<div class="couple">${p(C.couple.bride, "left", 0)}
-      <div class="couple-mid" data-anim="zoom"><svg class="rings" viewBox="0 0 110 76" aria-hidden="true"><circle cx="40" cy="38" r="28"/><circle cx="70" cy="38" r="28"/></svg>${C.couple.together ? `<p class="together">${esc(C.couple.together)}</p>` : ""}</div>
-      ${p(C.couple.groom, "right", 1)}</div>`;
+    if (C.couple.layout === "cards") {
+      $("#coupleGrid").innerHTML = `<div class="couple">${p(C.couple.bride, "left", 0)}
+        <div class="couple-mid" data-anim="zoom"><svg class="rings" viewBox="0 0 110 76" aria-hidden="true"><circle cx="40" cy="38" r="28"/><circle cx="70" cy="38" r="28"/></svg>${C.couple.together ? `<p class="together">${esc(C.couple.together)}</p>` : ""}</div>
+        ${p(C.couple.groom, "right", 1)}</div>`;
+    } else {
+      /* "meet" layout: bride on the left, groom on the right, parents shown first.
+         As you scroll, the parents fade away, the two come together, and a cross appears between them. */
+      const side = (x, i, parents, cls) => `
+        <div class="ms ${cls}" data-side="${cls}">
+          <div class="portrait ${esc(["arch","rounded","oval","circle"].includes(C.couple.frame) ? C.couple.frame : "rounded")} ms-photo" data-ph="${esc((x.name || "?")[0])}" data-i="${i}">${x.photo ? `<img src="${esc(x.photo)}" alt="${esc(x.fullName || x.name)}" loading="lazy">` : ph((x.name || "?")[0], i, true)}</div>
+          <h3 class="ms-name">${esc(x.name)}</h3>
+          <p class="role">${esc(x.role)}</p>
+          ${parents ? `<p class="ms-parents">${esc(parents)}</p>` : ""}
+        </div>`;
+      $("#coupleGrid").innerHTML = `
+        <div class="meet" id="meet">
+          <div class="meet-stage">
+            ${side(C.couple.bride, 0, C.parents?.first, "ms-l")}
+            <svg class="ms-cross" viewBox="0 0 40 52" aria-hidden="true"><path d="M20 2v48M6 16h28" fill="none" stroke-width="2.2" stroke-linecap="round"/></svg>
+            ${side(C.couple.groom, 1, C.parents?.second, "ms-r")}
+            ${C.couple.together ? `<p class="ms-together">${esc(C.couple.together)}</p>` : ""}
+          </div>
+        </div>`;
+      const meet = $("#meet"), L = meet.querySelector(".ms-l"), R = meet.querySelector(".ms-r"), X = meet.querySelector(".ms-cross"), T = meet.querySelector(".ms-together");
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        const r = meet.getBoundingClientRect(), range = Math.max(1, r.height - innerHeight);
+        const pr = reduce ? 1 : Math.min(1, Math.max(0, -r.top / range));
+        const narrow = innerWidth < 760;
+        // how far each family travels so the photos end up side by side with a small gap between them
+        const photo = Math.min(230, narrow ? 150 : .44 * innerWidth);
+        const move = narrow ? Math.max(0, innerHeight / 4 - photo / 2 - 60) : Math.max(0, Math.min(innerWidth - 40, 1000) / 4 - photo / 2 - 40);
+        const t = Math.min(1, pr / .6);                // names travel in during the first 60% of the scroll
+        const dx = narrow ? 0 : t * move, dy = narrow ? t * move : 0;
+        L.style.transform = `translate(${dx}px, ${dy}px)`;
+        R.style.transform = `translate(${-dx}px, ${-dy}px)`;
+        const parentsFade = Math.min(1, Math.max(0, (pr - .05) / .3));
+        L.querySelector(".ms-parents") && (L.querySelector(".ms-parents").style.cssText = `opacity:${1 - parentsFade};transform:translateY(${-parentsFade * 24}px)`);
+        R.querySelector(".ms-parents") && (R.querySelector(".ms-parents").style.cssText = `opacity:${1 - parentsFade};transform:translateY(${-parentsFade * 24}px)`);
+        const cross = Math.min(1, Math.max(0, (pr - .55) / .25));
+        X.style.opacity = cross; X.style.transform = `scale(${.6 + .4 * cross}) rotate(${(1 - cross) * -40}deg)`;
+        if (T) T.style.opacity = Math.min(1, Math.max(0, (pr - .8) / .15));
+      };
+      const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+      addEventListener("scroll", onScroll, { passive: true });
+      addEventListener("resize", onScroll);
+      update();
+    }
   }
 
   // a photo that isn't uploaded yet falls back to the pretty placeholder
