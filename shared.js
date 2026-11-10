@@ -260,8 +260,10 @@ a.chip:hover{background:var(--accent);color:var(--accent-ink,#fff)}
 .mp-tracks{display:grid;gap:6px;margin-bottom:14px}
 .mp-tr{padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:transparent;color:inherit;text-align:left;cursor:pointer;font:inherit}
 .mp-tr.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,transparent)}
-.mp-vol{display:grid;gap:6px;font-weight:700;font-size:13px}
-.mp-vol input{width:100%;accent-color:var(--accent)}
+.mp-row{display:grid;grid-template-columns:1fr 92px 40px;align-items:center;gap:8px;margin-bottom:12px}
+.mp-name{display:flex;align-items:center;gap:6px;font-weight:700;font-size:13px;cursor:pointer}
+.mp-row input[type=range]{width:100%;accent-color:var(--accent)}
+.mp-v{font-size:12px;color:var(--muted);text-align:right}
 .mp-stop{margin-top:12px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
 @keyframes ws-eq{to{height:18px}}
 
@@ -586,42 +588,56 @@ W.init = function(site){
   /* ---- floating buttons ---- */
   document.body.insertAdjacentHTML("beforeend", `<button class="fab" id="toTop" type="button" aria-label="Back to top">&#8593;</button>`);
   $("#toTop").onclick = () => scrollTo({ top:0, behavior: reduce ? "auto" : "smooth" });
-  /* ---- music: one or more tracks, each with its own default volume ----
-     config.js music: [ { label, src, volume }, ... ]   (volume 0-100)
-     A visitor can switch track and change volume; their choice is remembered on that device. */
+  /* ---- music: several tracks that play together, each with its own volume ----
+     config.js music: [ { label, src, volume }, ... ]   (volume 0-100, the starting level)
+     Visitors can switch each track on or off and change its volume; choices are remembered on that device. */
   if (D.music) {
-    const tracks = (Array.isArray(D.music) ? D.music : [D.music]).map(t => typeof t === "string" ? { src:t, label:"Music", volume:70 } : Object.assign({ label:"Music", volume:70 }, t));
+    const tracks = (Array.isArray(D.music) ? D.music : [D.music]).map((t, i) => typeof t === "string" ? { src:t, label:"Track " + (i + 1), volume:70 } : Object.assign({ label:"Track " + (i + 1), volume:70 }, t));
     let saved = null; try { saved = JSON.parse(localStorage.getItem("wsMusic") || "null"); } catch (e) {}
-    let cur = saved && tracks[saved.track] ? saved.track : 0;
-    let vol = saved && typeof saved.volume === "number" ? saved.volume : null;   // null = use the track's default
+    const st = tracks.map((t, i) => ({
+      on: saved && saved.tracks && saved.tracks[i] ? saved.tracks[i].on !== false : true,
+      vol: saved && saved.tracks && saved.tracks[i] && typeof saved.tracks[i].vol === "number" ? saved.tracks[i].vol : t.volume,
+    }));
+    let playing = false;
     document.body.insertAdjacentHTML("beforeend",
       `<button class="fab mbtn-menu" id="musicMenu" type="button" aria-label="Music options" aria-expanded="false">&#9835;</button>
        <button class="fab" id="musicBtn" type="button" aria-label="Play music"><span class="eq"><i></i><i></i><i></i></span></button>
        <div id="musicPanel" class="mpanel" hidden>
          <p class="mp-title">Music</p>
-         <div class="mp-tracks">${tracks.map((t, i) => `<button type="button" class="mp-tr" data-tr="${i}">${esc(t.label)}</button>`).join("")}</div>
-         <label class="mp-vol">Volume <span id="musicVolV"></span>
-           <input id="musicVol" type="range" min="0" max="100" step="1" aria-label="Music volume"></label>
+         ${tracks.map((t, i) => `<div class="mp-row">
+            <label class="mp-name"><input type="checkbox" data-on="${i}"> <span>${esc(t.label)}</span></label>
+            <input type="range" min="0" max="100" step="1" data-vol="${i}" aria-label="Volume for ${esc(t.label)}">
+            <span class="mp-v" data-vv="${i}"></span></div>`).join("")}
          <button type="button" class="mp-stop" id="musicStop">Stop music</button>
        </div>
-       <audio id="audio" loop preload="none"></audio>`);
-    const b = $("#musicBtn"), a = $("#audio"), p = $("#musicPanel"), vr = $("#musicVol"), menu = $("#musicMenu");
-    const pct = () => vol ?? tracks[cur].volume;
-    const remember = () => { try { localStorage.setItem("wsMusic", JSON.stringify({ track: cur, volume: vol })); } catch (e) {} };
-    const setOn = on => { b.classList.toggle("on", on); b.setAttribute("aria-label", on ? "Pause music" : "Play music"); };
-    const sync = () => {
-      a.volume = pct() / 100; vr.value = pct(); $("#musicVolV").textContent = pct() + "%";
-      p.querySelectorAll("[data-tr]").forEach(x => x.classList.toggle("on", +x.dataset.tr === cur));
+       ${tracks.map((t, i) => `<audio data-track="${i}" loop preload="none" src="${encodeURI(t.src)}"></audio>`).join("")}`);
+    const b = $("#musicBtn"), p = $("#musicPanel"), menu = $("#musicMenu");
+    const audios = tracks.map((t, i) => document.querySelector(`audio[data-track="${i}"]`));
+    const remember = () => { try { localStorage.setItem("wsMusic", JSON.stringify({ tracks: st.map(s => ({ on: s.on, vol: s.vol })) })); } catch (e) {} };
+    const setOn = on => { playing = on; b.classList.toggle("on", on); b.setAttribute("aria-label", on ? "Pause music" : "Play music"); };
+    const applyTrack = i => {
+      const a = audios[i], s = st[i];
+      a.volume = s.vol / 100;
+      $(`[data-vv="${i}"]`).textContent = s.vol + "%";
+      if (playing && s.on && a.paused) a.play().catch(() => {});
+      if (!s.on) a.pause();
     };
-    const load = i => { cur = i; a.src = encodeURI(tracks[i].src); sync(); remember(); };
-    const play = () => a.play().then(() => setOn(true)).catch(() => setOn(false));
-    load(cur);
-    b.onclick = () => { if (a.paused) play(); else { a.pause(); setOn(false); } };
+    const startAll = () => {
+      st.forEach((s, i) => { if (s.on) audios[i].play().catch(() => {}); });
+      setOn(true);
+    };
+    const stopAll = () => { audios.forEach(a => a.pause()); setOn(false); };
+    tracks.forEach((t, i) => {
+      const cb = p.querySelector(`[data-on="${i}"]`), r = p.querySelector(`[data-vol="${i}"]`);
+      cb.checked = st[i].on; r.value = st[i].vol;
+      cb.onchange = () => { st[i].on = cb.checked; if (cb.checked && playing) audios[i].play().catch(() => {}); if (!cb.checked) audios[i].pause(); remember(); };
+      r.oninput = () => { st[i].vol = +r.value; applyTrack(i); remember(); };
+      applyTrack(i);
+    });
+    b.onclick = () => { if (playing) stopAll(); else startAll(); };
     const openMenu = o => { p.hidden = !o; menu.setAttribute("aria-expanded", o); };
     menu.onclick = () => openMenu(p.hidden);
-    p.querySelectorAll("[data-tr]").forEach(x => x.onclick = () => { load(+x.dataset.tr); if (!a.paused) play(); });
-    vr.oninput = e => { vol = +e.target.value; a.volume = vol / 100; $("#musicVolV").textContent = vol + "%"; remember(); };
-    $("#musicStop").onclick = () => { a.pause(); setOn(false); openMenu(false); };
+    $("#musicStop").onclick = () => { stopAll(); openMenu(false); };
     document.addEventListener("click", e => { if (!p.hidden && !e.target.closest("#musicPanel,#musicMenu")) openMenu(false); });
   }
 
