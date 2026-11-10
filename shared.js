@@ -274,17 +274,26 @@ html,body,main,section{overflow-x:hidden;overflow-x:clip}   /* no sideways scrol
 #toTop{right:20px;bottom:20px;opacity:0;pointer-events:none;transform:translateY(20px);font-size:20px}
 .cover{position:fixed;inset:0;z-index:150;pointer-events:none;visibility:hidden}
 .cover.in,.cover.out{visibility:visible}
-.cover.curtain .cu{position:absolute;top:0;bottom:0;width:50.5%;background:linear-gradient(90deg,#6e1a2c,#b8556a 30%,#e7a6b3 50%,#b8556a 70%,#6e1a2c);transition:transform .75s cubic-bezier(.6,0,.3,1);box-shadow:inset 0 0 60px rgba(0,0,0,.35)}
+.cover.curtain .cu{position:absolute;top:0;bottom:0;width:50.5%;background:repeating-linear-gradient(90deg,rgba(255,255,255,0) 0 22px,rgba(255,255,255,.28) 30px,rgba(90,20,40,.18) 44px,rgba(255,255,255,0) 60px),linear-gradient(90deg,#b5566e,#f4c9d6 28%,#e79fb3 52%,#c96d85 80%,#a54a63);transition:transform .9s cubic-bezier(.6,0,.3,1);box-shadow:inset 0 0 70px rgba(80,10,30,.35)}
+.cover.curtain .cu::before{content:"";position:absolute;left:0;right:0;top:0;height:9%;background:linear-gradient(180deg,#8f3a52,#c96d85);box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .cover.curtain .cu-l{left:0;transform:translateX(-102%)}
 .cover.curtain .cu-r{right:0;transform:translateX(102%)}
 .cover.curtain.in .cu-l,.cover.curtain.in .cu-r{transform:none}
 .cover.curtain.out .cu-l{transform:translateX(-102%)}
 .cover.curtain.out .cu-r{transform:translateX(102%)}
-.cover.fall .fall-sheet{position:absolute;left:0;right:0;top:0;bottom:0;background:linear-gradient(180deg,#0b3c5d,#1f7aa8 55%,#7fd0f0);transform:translateY(-102%);transition:transform .7s cubic-bezier(.4,0,.8,.6)}
-.cover.fall .fall-sheet svg{position:absolute;left:0;bottom:-38px;width:100%;height:40px}
-.cover.fall .fall-sheet svg path{fill:#1f7aa8}
-.cover.fall.in .fall-sheet{transform:none;transition:transform .7s cubic-bezier(.2,.6,.4,1)}
-.cover.fall.out .fall-sheet{transform:translateY(102%);transition:transform .8s cubic-bezier(.4,0,.8,.6)}
+.cover.fall .w{position:absolute;left:0;right:0;top:0;height:115%;transform:translateY(-110%);transition:transform .85s cubic-bezier(.45,0,.75,.5)}
+.cover.fall .w svg{position:absolute;left:0;bottom:-46px;width:100%;height:56px}
+.cover.fall .w1{background:linear-gradient(180deg,#06304f,#0b4d74 70%,#11679a)}
+.cover.fall .w1 svg path{fill:#11679a}
+.cover.fall .w2{background:linear-gradient(180deg,#0b4d74,#1d86b8 70%,#38aed9);transition-delay:.07s}
+.cover.fall .w2 svg path{fill:#38aed9}
+.cover.fall .w3{background:linear-gradient(180deg,#1d86b8,#7fd3ef 70%,#c8f1ff);transition-delay:.14s}
+.cover.fall .w3 svg path{fill:#c8f1ff}
+.cover.fall .foam{position:absolute;left:0;right:0;bottom:-46px;height:14px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.95) 0 14px,rgba(255,255,255,.2) 14px 26px);filter:blur(1.5px);opacity:.9}
+.cover.fall.in .w{transform:none;transition:transform .9s cubic-bezier(.2,.7,.35,1)}
+.cover.fall.in .w2{transition-delay:.1s}.cover.fall.in .w3{transition-delay:.2s}
+.cover.fall.out .w{transform:translateY(110%);transition:transform .9s cubic-bezier(.5,0,.9,.5)}
+.cover.fall.out .w2{transition-delay:.08s}.cover.fall.out .w3{transition-delay:.16s}
 .f1car{position:fixed;left:-170px;bottom:38vh;width:150px;z-index:95;pointer-events:none;animation:f1drive 1.9s cubic-bezier(.3,.1,.5,1) forwards}
 .f1car svg{width:100%;height:auto;overflow:visible}
 @keyframes f1drive{0%{transform:translateX(0) rotate(0)}35%{transform:translateX(45vw) rotate(-6deg)}60%{transform:translateX(70vw) rotate(9deg)}100%{transform:translateX(calc(100vw + 200px)) rotate(-3deg)}}
@@ -457,17 +466,12 @@ W.init = function(site){
   const evSec = $("#events");
   if (evSec && (C.families || C.bands)) {
     let html = "";
-    if (C.families && C.families.members && C.families.members.length) {
-      const ini = n => (n || "?").split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
+    if (C.families && (((C.families.left || {}).photos || []).length || ((C.families.right || {}).photos || []).length)) {
+      const side = (x, cls) => `<div class="fside ${cls}"><h3 class="fside-h">${esc((x && x.label) || "")}</h3><div class="fside-grid">${((x && x.photos) || []).slice(0, 12).map(src => `<img src="${esc(src)}" alt="" loading="lazy">`).join("")}</div></div>`;
       html += `<section id="families" data-sec="families" class="families"><div class="wrap">
         <p class="eyebrow">${esc(C.families.eyebrow || "Meet the")}</p>
         <h2 class="ftitle">${esc(C.families.title || "Families")}</h2>
-        <div class="fam-grid" data-anim="up">${C.families.members.slice(0, 5).map(m => `
-          <figure class="fam">
-            <div class="fam-ph">${m.photo ? `<img src="${esc(m.photo)}" alt="${esc(m.name)}" loading="lazy">` : `<span>${esc(ini(m.name))}</span>`}</div>
-            <figcaption><b>${esc(m.name)}</b><span>${esc(m.relation || "")}</span></figcaption>
-          </figure>`).join("")}</div>
-        ${C.families.photos && C.families.photos.length ? `<div class="fam-photos" data-anim="up">${C.families.photos.slice(0, 5).map(src => `<img src="${esc(src)}" alt="" loading="lazy">`).join("")}</div>` : ""}
+        <div class="fam-split" data-anim="up">${side(C.families.left, "fl")}${side(C.families.right, "fr")}</div>
       </div></section>`;
     }
     (C.bands || []).forEach((b, i) => {
@@ -480,14 +484,11 @@ W.init = function(site){
   document.head.insertAdjacentHTML("beforeend", `<style>
     .families{padding:90px 20px 60px;text-align:center}
     .families .ftitle{font-family:var(--f-head);font-size:clamp(30px,4.5vw,46px);margin:6px 0 26px;color:var(--ink)}
-    .fam-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:22px 16px;max-width:900px;margin:0 auto}
-    .fam{margin:0;display:grid;justify-items:center;gap:10px}
-    .fam-ph{width:min(120px,30vw);aspect-ratio:1;border-radius:50%;overflow:hidden;background:var(--soft);display:grid;place-items:center;font:700 26px var(--f-head);color:var(--accent);border:2px solid var(--gold)}
-    .fam-ph img{width:100%;height:100%;object-fit:cover}
-    .fam figcaption{display:grid;gap:2px;font-size:14px}.fam figcaption b{font-weight:700}.fam figcaption span{color:var(--muted);font-size:13px}
-    .fam-photos{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:900px;margin:34px auto 0}
-    .fam-photos img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px}
-    @media (max-width:760px){.fam-photos{grid-template-columns:repeat(2,1fr)}.fam-photos img:last-child:nth-child(odd){grid-column:1/-1;aspect-ratio:4/3}}
+    .fam-split{display:grid;grid-template-columns:1fr 1fr;gap:26px;max-width:1000px;margin:0 auto;text-align:left}
+    .fside-h{font-family:var(--f-head);font-weight:400;font-size:clamp(18px,2.2vw,22px);margin:0 0 12px;text-align:center;color:var(--accent)}
+    .fside-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .fside-grid img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px}
+    @media (max-width:760px){.fam-split{gap:14px}.fside-grid{grid-template-columns:1fr;gap:8px}}
     .band-plain{min-height:60vh}
   </style>`);
 
@@ -508,7 +509,7 @@ W.init = function(site){
   /* ---- sections: order, hide, titles, nav ---- */
   const S = C.sections || {};
   const extra = [];
-  if (C.families && C.families.members && C.families.members.length) extra.push("families");
+  if (C.families && (((C.families.left || {}).photos || []).length || ((C.families.right || {}).photos || []).length)) extra.push("families");
   (C.bands || []).forEach((b, i) => extra.push("band" + i));
   let order = (S.order && S.order.length ? S.order : Object.keys(DEFAULT_TITLES)).filter(k => DEFAULT_TITLES[k]);
   const evAt = order.indexOf("events");
@@ -758,7 +759,7 @@ W.init = function(site){
     cover.className = "cover " + (curtain ? "curtain" : "fall");
     cover.innerHTML = curtain
       ? `<div class="cu cu-l"></div><div class="cu cu-r"></div>`
-      : `<div class="fall-sheet"><svg viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden="true"><path d="M0 22 Q50 2 100 22 T200 22 T300 22 T400 22 V40 H0 Z"/></svg></div>`;
+      : `<div class="w w1"><svg viewBox="0 0 400 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 26 Q40 4 80 26 T160 26 T240 26 T320 26 T400 26 V56 H0 Z"/></svg></div><div class="w w2"><svg viewBox="0 0 400 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 Q44 10 88 30 T176 30 T264 30 T352 30 T400 30 V56 H0 Z"/></svg></div><div class="w w3"><svg viewBox="0 0 400 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 34 Q48 14 96 34 T192 34 T288 34 T384 34 V56 H0 Z"/></svg></div>`;
     document.body.appendChild(cover);
     setTimeout(() => cover.classList.add("in"), 1000);                       // closes over the page
     setTimeout(() => scrollTo({ top:0, behavior:"auto" }), 1700);              // jump to the top while covered

@@ -280,16 +280,17 @@ window.WEDDING = {
     designPanel: true,        // true while testing, false before you share the site
   },
 
-  /* Meet the families: shown just after the couple section. Leave members empty to hide it. */
+  /* Meet the families: a heading with two columns, bride's family on the left and groom's family on the right,
+     each with its photos. Shown just above the sakura white video. Hidden until photos are added. */
   families: {
     eyebrow: "Meet the",
     title: "Families",
-    members: [
-      // { name: "Name Surname", relation: "Brother of the bride", photo: "photos/families/brother.jpg" },
-    ],
-    photos: [
-      // "photos/families/family1.jpg", ...   (4 or 5 photos, shown as a fixed grid, not a slideshow)
-    ],
+    left:  { label: "The Bride's Family", photos: [
+      // "photos/families/bride1.jpg", "photos/families/bride2.jpg", ...
+    ] },
+    right: { label: "The Groom's Family", photos: [
+      // "photos/families/groom1.jpg", "photos/families/groom2.jpg", ...
+    ] },
   },
 
   /* Video bands placed just above "The Celebrations". Add more with extra entries. */
