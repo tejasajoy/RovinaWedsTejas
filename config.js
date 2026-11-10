@@ -274,7 +274,7 @@ window.WEDDING = {
        Visitors can switch each track on or off and change its volume with the ♫ button.
        Use null for no music. */
     music: [
-      { label: "Ocean waves",   src: "music/WAVES.mp3",           volume: 50 },
+      { label: "Ocean waves",   src: "music/waves.mp3",           volume: 50 },
       { label: "Piano strings", src: "music/PIRATES STRINGS.mp3", volume: 100 },
     ],
     designPanel: true,        // true while testing, false before you share the site
