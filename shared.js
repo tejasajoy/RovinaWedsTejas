@@ -151,6 +151,7 @@ html,body,main,section{overflow-x:hidden;overflow-x:clip}   /* no sideways scrol
   .tl-line,.tl-fill{left:27px}
   .ev{grid-template-columns:56px minmax(0,1fr);gap:16px}
   .ev>*{min-width:0}
+  .js .ev[data-anim="left"],.js .ev[data-anim="right"]{transform:translateX(0) translateY(26px)}
   .ev .node,.ev:nth-of-type(odd) .node{grid-column:1;grid-row:1}
   .ev .card,.ev:nth-of-type(odd) .card{grid-column:2;grid-row:1;text-align:left}
   .ev .card .chips,.ev:nth-of-type(odd) .card .chips{justify-content:flex-start}
@@ -720,7 +721,19 @@ W.init = function(site){
     if (reduce) return scrollTo({ top:0, behavior:"auto" });
     const car = document.createElement("div");
     car.className = "f1car";
-    car.innerHTML = `<svg viewBox="0 0 160 60" aria-hidden="true"><rect x="30" y="34" width="110" height="10" rx="4" fill="#222"/><path d="M40 34 L60 18 L118 18 L132 34 Z" fill="var(--accent)"/><rect x="62" y="6" width="12" height="16" fill="#222"/><path d="M96 14 h22 v4 h-22 z" fill="#222"/><circle cx="48" cy="46" r="11" fill="#111"/><circle cx="48" cy="46" r="4" fill="#bbb"/><circle cx="118" cy="46" r="11" fill="#111"/><circle cx="118" cy="46" r="4" fill="#bbb"/><path d="M4 40 h20 M10 30 h14 M2 50 h16" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" opacity=".6"/></svg>`;
+    car.innerHTML = `<svg viewBox="0 0 200 80" aria-hidden="true">
+      <rect x="4" y="16" width="30" height="5" rx="2" fill="#e10600"/>
+      <rect x="10" y="21" width="5" height="22" fill="#111"/>
+      <path d="M24 56 L30 40 Q36 34 60 33 L104 36 Q122 38 140 42 L178 46 Q190 50 184 58 Q180 62 170 62 L40 62 Q26 62 24 56 Z" fill="#e10600"/>
+      <path d="M48 33 Q60 20 84 22 L96 30 L60 34 Z" fill="#e10600"/>
+      <rect x="66" y="46" width="60" height="4" fill="#fff" opacity=".85"/>
+      <path d="M96 33 Q100 24 108 26 L110 34 Z" fill="#111"/>
+      <circle cx="104" cy="30" r="5" fill="#f5c400"/>
+      <rect x="172" y="60" width="26" height="4" rx="1" fill="#111"/>
+      <rect x="178" y="54" width="4" height="8" fill="#111"/>
+      <circle cx="44" cy="62" r="14" fill="#151515"/><circle cx="44" cy="62" r="6" fill="#bbb"/>
+      <circle cx="160" cy="64" r="12" fill="#151515"/><circle cx="160" cy="64" r="5" fill="#bbb"/>
+    </svg>`;
     document.body.appendChild(car);
     setTimeout(() => scrollTo({ top:0, behavior:"smooth" }), 700);
     setTimeout(() => car.remove(), 2000);
