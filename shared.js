@@ -94,7 +94,7 @@ a.chip:hover{background:var(--accent);color:var(--accent-ink,#fff)}
 .ms-name{font-family:var(--f-script);font-weight:400;font-size:clamp(40px,7vw,68px);line-height:1.05;color:var(--accent);margin:0}
 .ms .role{margin:0}
 .ms-parents{max-width:30ch;margin:0;color:var(--muted);font-size:14px;line-height:1.5;transition:opacity .2s}
-.ms-cross{position:absolute;left:50%;top:50%;width:34px;height:44px;margin:-22px 0 0 -17px;stroke:var(--gold);opacity:0;pointer-events:none}
+.ms-cross{position:absolute;left:50%;top:50%;width:64px;height:83px;margin:-41px 0 0 -32px;stroke:var(--gold);opacity:0;pointer-events:none}
 .ms-together{position:absolute;bottom:14vh;left:0;right:0;text-align:center;font-family:var(--f-head);font-style:italic;color:var(--muted);margin:0;opacity:0}
 @media (max-width:760px){
   .meet-stage{grid-template-columns:1fr;grid-template-rows:1fr 1fr;padding:0 16px}
@@ -477,7 +477,7 @@ W.init = function(site){
         <div class="meet" id="meet">
           <div class="meet-stage">
             ${side(C.couple.bride, 0, C.parents?.first, "ms-l")}
-            <svg class="ms-cross" viewBox="0 0 40 52" aria-hidden="true"><path d="M20 2v48M6 16h28" fill="none" stroke-width="2.2" stroke-linecap="round"/></svg>
+            <svg class="ms-cross" viewBox="0 0 40 52" aria-hidden="true"><path d="M20 2v48M6 16h28" fill="none" stroke-width="2.6" stroke-linecap="round"/></svg>
             ${side(C.couple.groom, 1, C.parents?.second, "ms-r")}
             ${C.couple.together ? `<p class="ms-together">${esc(C.couple.together)}</p>` : ""}
           </div>
