@@ -463,6 +463,8 @@ W.init = function(site){
   }
 
   /* ---- meet the families, then an optional video band, both just above "The Celebrations" ---- */
+  const famPhotos = C.families && (((C.families.left || {}).photos || []).length || ((C.families.right || {}).photos || []).length);
+  const showFamilies = !!C.families && (famPhotos || D.designPanel);   // while testing, show placeholders until photos are added
   const evSec = $("#events");
   if (evSec && (C.families || C.bands)) {
     let html = "";
@@ -511,8 +513,6 @@ W.init = function(site){
   /* ---- sections: order, hide, titles, nav ---- */
   const S = C.sections || {};
   const extra = [];
-  const famPhotos = C.families && (((C.families.left || {}).photos || []).length || ((C.families.right || {}).photos || []).length);
-  const showFamilies = !!C.families && (famPhotos || D.designPanel);   // while testing, show placeholders until photos are added
   if (showFamilies) extra.push("families");
   (C.bands || []).forEach((b, i) => extra.push("band" + i));
   let order = (S.order && S.order.length ? S.order : Object.keys(DEFAULT_TITLES)).filter(k => DEFAULT_TITLES[k]);
